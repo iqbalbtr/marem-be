@@ -14,7 +14,6 @@ export class ProfileService {
 
   async updateBussinessProfile(userId: string, businessProfile: BatchParticipantProfileDto) {
 
-    // Akses model 'users' (sesuai nama model di schema)
     const user = await this.prismaService.users.findUnique({
       where: {
         id: userId
@@ -29,7 +28,7 @@ export class ProfileService {
       throw new NotFoundException('only participant data can update business profile');
     }
 
-    const { participant_profile, participat_bussiness, profile } = businessProfile
+    const { participant_profile, participat_bussiness, profile, name } = businessProfile
 
     return await this.prismaService.$transaction(async (prisma) => {
 
@@ -42,11 +41,12 @@ export class ProfileService {
         data: {
           profile: imagePath ? imagePath[0] : user.profile,
           gender: participant_profile.gender,
+          name: name,
           is_verified: true,
           participant_profile: {
             upsert: {
               create: {
-                start_year: participant_profile.start_year,
+                start_year: participat_bussiness.start_year,
                 last_education: participant_profile.last_education,
                 city: participat_bussiness.city,
                 clasification: participant_profile.clasification,
@@ -58,7 +58,7 @@ export class ProfileService {
                 street: participat_bussiness.street,
               },
               update: {
-                start_year: participant_profile.start_year,
+                start_year: participat_bussiness.start_year,
                 last_education: participant_profile.last_education,
                 city: participat_bussiness.city,
                 clasification: participant_profile.clasification,

@@ -1,6 +1,6 @@
 import { classification, gender } from "@prisma"
 import { Type } from "class-transformer"
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Length } from "class-validator"
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Length, Max, Min, ValidateNested } from "class-validator"
 
 export class ParticipantProfileDto {
 
@@ -15,10 +15,6 @@ export class ParticipantProfileDto {
     @Length(10, 20)
     npwp: string
 
-    @IsNumber()
-    @Length(4, 4)
-    start_year: number
-
     @IsEnum(gender)
     gender: gender
 
@@ -29,10 +25,6 @@ export class ParticipantProfileDto {
 }
 
 export class BussinessProfileDto {
-
-    @IsString()
-    @Length(3, 100)
-    name: string
 
     @IsString()
     @Length(3, 100)
@@ -59,21 +51,28 @@ export class BussinessProfileDto {
     source_joined: string;
 
     @IsNumber()
-    @Length(4, 4)
-    birth_year: number
+    @Min(1000)
+    @Max(9999)
+    start_year: number
 }
 
 export class BatchParticipantProfileDto {
+
+    @IsString()
+    @Length(3, 100)
+    name: string
 
     @IsOptional()
     @IsString()
     profile?: string;
 
     @IsNotEmpty()
+    @ValidateNested()
     @Type(() => ParticipantProfileDto)
     participant_profile: ParticipantProfileDto
 
     @IsNotEmpty()
+    @ValidateNested()
     @Type(() => BussinessProfileDto)
     participat_bussiness: BussinessProfileDto
 }

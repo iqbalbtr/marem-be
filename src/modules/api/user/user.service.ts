@@ -49,7 +49,6 @@ export class UserService {
   }
 
   async findOne(id: string) {
-    // Akses model 'users'
     const res = await this.prismaService.users.findUnique({
       where: {
         id: id
@@ -63,11 +62,10 @@ export class UserService {
         is_active: true,
         is_verified: true,
         gender: true,
-        // Relasi snake_case
         assesor_profile: true,
         participant_profile: {
           include: {
-            business_profile: true // Relasi snake_case
+            business_profile: true
           }
         },
       }

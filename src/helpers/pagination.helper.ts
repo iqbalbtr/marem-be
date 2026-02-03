@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma";
+type UncapitalizeModel<T extends string> = Uncapitalize<T>;
 
 export type PaginationProps<T extends Prisma.ModelName> = {
   prismaService: PrismaClient;
@@ -12,6 +13,21 @@ export type PaginationProps<T extends Prisma.ModelName> = {
 };
 
 export class PaginationHelper {
+
+  static getWhereQuery<T extends Prisma.ModelName>(
+    table: T,
+    whereQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['where'],
+  ): NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['where']> {
+    return (whereQuery ?? {}) as NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['where']>;
+  }
+
+  static getOrderByQuery<T extends Prisma.ModelName>(
+    table: T,
+    orderByQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['orderBy'],
+  ): NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['orderBy']> {
+    return (orderByQuery ?? {}) as NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['orderBy']>;
+  }
+
   static async createPaginationData<T extends Prisma.ModelName>({
     prismaService,
     page,
@@ -23,29 +39,34 @@ export class PaginationHelper {
     selectQuery,
   }: PaginationProps<T>) {
 
-    const modelKey = (table as string).toLowerCase();
+    const modelKey = (table.charAt(0).toLowerCase() + table.slice(1)) as UncapitalizeModel<T>;
 
     const modelDelegate = (prismaService as any)[modelKey];
 
     if (!modelDelegate) {
-      throw new Error(`Model '${table}' tidak ditemukan di Prisma Client.`);
+      throw new Error(`Model '${table}' (key: ${modelKey}) tidak ditemukan di Prisma Client.`);
     }
 
     const total_items = await modelDelegate.count({
       where: whereQuery,
     });
-    
 
     const total_pages = Math.ceil(total_items / per_page);
 
-    const data = await modelDelegate.findMany({
+    const queryArgs: any = {
       where: whereQuery,
-      include: includeQuery,
-      select: selectQuery,
       orderBy: orderByQuery,
       skip: (page - 1) * per_page,
       take: per_page,
-    });
+    };
+
+    if (selectQuery) {
+      queryArgs.select = selectQuery;
+    } else if (includeQuery) {
+      queryArgs.include = includeQuery;
+    }
+
+    const data = await modelDelegate.findMany(queryArgs);
 
     return {
       data,
