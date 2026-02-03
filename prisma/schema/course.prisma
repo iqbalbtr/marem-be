@@ -1,0 +1,14 @@
+// model course_module {
+//     id          String   @id @unique @default(uuid())
+//     title       String   @db.VarChar(200)
+//     description String?  @db.Text
+//     order       Int
+
+//     course_id String
+//     course    course  @relation(fields: [course_id], references: [id])
+
+//     lessons course_lesson[]
+
+//     created_at DateTime @default(now())
+//     updated_at DateTime @updatedAt
+// }

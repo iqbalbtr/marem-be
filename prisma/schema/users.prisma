@@ -1,0 +1,163 @@
+enum user_role {
+    admin
+    participant
+    asesor
+    mentor
+    fasilitator
+}
+
+enum gender {
+    male
+    female
+    unknown
+}
+
+enum classification {
+    go_online
+    go_digital
+    go_modern
+    go_global
+}
+
+model users {
+    id          String    @id @unique @default(uuid())
+    name        String    @db.VarChar(100)
+    email       String    @unique @db.VarChar(100)
+    role        user_role @default(participant)
+    gender      gender    @default(unknown)
+    profile     String?   @db.Text
+    is_verified Boolean   @default(false)
+    is_active   Boolean   @default(true)
+    password    String
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    user_tokens         user_tokens[]
+    assesor_profile     assesor_profile?
+    participant_profile participant_profile?
+}
+
+model assesor_profile {
+    id String @id @unique @default(uuid())
+
+    nik            String  @db.VarChar(16)
+    position       String  @db.VarChar(100)
+    organization   String  @db.VarChar(100)
+    specialization String  @db.VarChar(100)
+    linked_in      String? @db.Text
+    portofolio     String? @db.Text
+    bio            String? @db.VarChar(300)
+    phone          String  @db.VarChar(15)
+    email          String  @db.VarChar(100)
+    account_number String  @db.VarChar(50)
+    account_name   String  @db.VarChar(100)
+
+    user_id String @unique
+    user    users  @relation(fields: [user_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+model participant_profile {
+    id String @id @unique @default(uuid())
+
+    clasification  classification
+    nik            String         @db.VarChar(16)
+    npwp           String         @db.VarChar(20)
+    last_education String         @db.VarChar(100)
+
+    start_year    Int
+    province      String
+    street        String
+    city          String
+    postal_code   String
+    source_joined String
+
+    user_id String @unique
+    user    users  @relation(fields: [user_id], references: [id])
+
+    business_profile business_profile?
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+enum product_type {
+    goods
+    services
+    both
+}
+
+enum business_type {
+    perorangan
+    cv
+    pt
+    koperasi
+}
+
+model business_profile {
+    id String @id @unique @default(uuid())
+
+    name        String @db.VarChar(100)
+    birth_year  Int
+    province    String
+    street      String
+    city        String
+    postal_code String
+
+    nib            String        @db.VarChar(50)
+    business_type  business_type
+    business_field String        @db.VarChar(100)
+
+    total_sku                Int
+    product_type             product_type
+    average_product_price    Decimal      @db.Decimal(15, 2)
+    monthly_product_capacity Int
+
+    participant_profile_id String              @unique
+    participant_profile    participant_profile @relation(fields: [participant_profile_id], references: [id])
+
+    bussines_developments business_developments[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+enum business_phase {
+    onboarding
+    active
+    scale_up
+}
+
+model business_developments {
+    id String @id @unique @default(uuid())
+
+    business_id String
+    business    business_profile @relation(fields: [business_id], references: [id])
+
+    date      DateTime
+    phase     business_phase
+    employees Int
+    revenue   Decimal        @db.Decimal(15, 2)
+    capacity  Decimal        @db.Decimal(15, 2)
+
+    business_permits       Json? @default("[]")
+    social_media_marketing Json? @default("[]")
+
+    is_legalized          Boolean @default(false)
+    has_financial_records Boolean @default(false)
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+model user_tokens {
+    id          String   @id @unique @default(uuid())
+    last_logged DateTime
+    expired     DateTime
+
+    user_id String
+    user    users  @relation(fields: [user_id], references: [id])
+}

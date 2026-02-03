@@ -1,0 +1,1 @@
+export const ALLOWED_EXT = ['.jpg', '.jpeg', '.png', '.gif', '.pdf', '.docx', '.webp', '.xlsx', '.csv', '.pptx', ".mp4"];
