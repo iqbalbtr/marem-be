@@ -31,7 +31,7 @@ export class BussinesPermitsDto {
   @IsEnum(['nib', 'siup', 'pirt', 'halal', 'other'], { message: 'permit_type must be one of the following values: nib, siup, pirt, halal, other' })
   permit_type: 'nib' | 'siup' | 'pirt' | 'halal' | 'other';
 
-  @IsNumber()
+  @IsOptional()
   @IsString()
   permit_number: string;
 

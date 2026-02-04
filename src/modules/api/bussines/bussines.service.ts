@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@database/prisma.service'; 
+import { PrismaService } from '@database/prisma.service';
 import { BusinessProfileDto } from './dto/update-bussines.dto';
 import { BusinessDevelopmentDto } from './dto/bussines-development.dto';
-import { business_developments } from '@prisma';
+import { business_developments, Prisma } from '@prisma';
 
 type GrowthData = {
     last_month_increase: string;
@@ -16,7 +16,7 @@ type NumericGrowthKey = 'employees' | 'revenue' | 'capacity' | 'social_media_cou
 @Injectable()
 export class BusinessService {
 
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(private readonly prismaService: PrismaService) { }
 
     async updateBusinessProfile(userId: string, data: BusinessProfileDto) {
         const userBusiness = await this.prismaService.users.findFirst({
@@ -56,6 +56,8 @@ export class BusinessService {
                 has_financial_records: data.has_financial_records ?? false,
                 is_legalized: data.is_legalized ?? false,
                 business_id: businessProfile.id,
+                business_permits: data.bussines_permits as unknown as Prisma.JsonArray,
+                social_media_marketing: data.social_medias as unknown as Prisma.JsonArray,
             },
         });
     }
@@ -91,13 +93,13 @@ export class BusinessService {
             ...developments[developments.length - 1],
             social_media_count: (developments[developments.length - 1].social_media_marketing as object[]).length,
             legal_permit_count: (developments[developments.length - 1].business_permits as object[]).length,
-        }; 
+        };
         const firstRecord = {
             ...developments[0],
             social_media_count: (developments[0].social_media_marketing as object[]).length,
             legal_permit_count: (developments[0].business_permits as object[]).length,
-        }; 
-        
+        };
+
         const currentDate = new Date(currentRecord.date);
 
         const targetLastMonth = developments.find((dev) => {
@@ -106,7 +108,7 @@ export class BusinessService {
                 d.getMonth() === currentDate.getMonth() - 1 &&
                 d.getFullYear() === currentDate.getFullYear()
             );
-        }) || developments[developments.length - 2] || firstRecord; 
+        }) || developments[developments.length - 2] || firstRecord;
 
         const lastMonthRecord = {
             ...targetLastMonth,
@@ -122,13 +124,13 @@ export class BusinessService {
         numericFields.forEach((key) => {
             summary.growth[key] = this.calcGrowthData(
                 key,
-                firstRecord,   
+                firstRecord,
                 lastMonthRecord,
-                currentRecord 
+                currentRecord
             );
         });
 
-        const safeDevelopments = developments.map(dev => ({
+        const safeDevelopments = developments.map(({ business_permits, social_media_marketing, created_at, updated_at, ...dev }) => ({
             ...dev,
             revenue: Number(dev.revenue),
             capacity: Number(dev.capacity)
@@ -150,9 +152,9 @@ export class BusinessService {
             },
         });
 
-        if (!user) throw new NotFoundException('User not found');
-        if (!user.participant_profile) throw new NotFoundException('Participant profile not found');
-        if (!user.participant_profile.business_profile) throw new NotFoundException('Business profile not found');
+        if (!user) throw new NotFoundException('user not found');
+        if (!user.participant_profile) throw new NotFoundException('participant profile not found');
+        if (!user.participant_profile.business_profile) throw new NotFoundException('business profile not found');
 
         return user.participant_profile.business_profile;
     }
@@ -170,8 +172,8 @@ export class BusinessService {
         return {
             last_month_increase: this.prefixIndicator(valCurrent - valLastMonth),
             last_period_increase: this.prefixIndicator(valCurrent - valFirstPeriod),
-            last_month_increase_percentage: this.prefixIndicator(this.calculatePercentage(valLastMonth, valCurrent)),
-            last_period_increase_percentage: this.prefixIndicator(this.calculatePercentage(valFirstPeriod, valCurrent)),
+            last_month_increase_percentage: this.prefixIndicator(this.calculatePercentage(valLastMonth, valCurrent), '%'),
+            last_period_increase_percentage: this.prefixIndicator(this.calculatePercentage(valFirstPeriod, valCurrent), '%'),
         };
     }
 
@@ -179,7 +181,7 @@ export class BusinessService {
         if (oldValue === 0) {
             return newValue === 0 ? 0 : 100;
         }
-        return parseFloat((((newValue - oldValue) / oldValue) * 100).toFixed(2)); 
+        return parseFloat((((newValue - oldValue) / oldValue) * 100).toFixed(2));
     }
 
     private toNumber(value: any): number {
@@ -189,7 +191,7 @@ export class BusinessService {
         return Number(value || 0);
     }
 
-    private prefixIndicator(value: number): string {
-        return value > 0 ? `+${value}` : value < 0 ? `-${value}` : '0';
+    private prefixIndicator(value: number, endFix?: string): string {
+        return (value > 0 ? `+${value}` : value < 0 ? `-${value}` : '0') + (endFix || '');
     }
 }

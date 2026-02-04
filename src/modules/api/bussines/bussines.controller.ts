@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { BusinessService } from './bussines.service';
 import { BusinessDevelopmentDto } from './dto/bussines-development.dto';
 import { Utils } from '@utils/index';
 import { AuthGuard } from '@guards/auth.guard';
 import { Role } from '@decorators/role.decorator';
+import { BusinessProfileDto } from './dto/update-bussines.dto';
 
 @UseGuards(AuthGuard)
 @Controller('/api/users/:userId/bussines')
@@ -15,14 +16,14 @@ export class BussinesController {
   @Patch('profile')
   async updateBusinessProfile(
     @Param('userId') userId: string,
-    @Body() data: any
+    @Body() data: BusinessProfileDto
   ) {
     const res = await this.businesService.updateBusinessProfile(userId, data);
     return Utils.ResponseSuccess('success', res);
   }
 
   @Role(["participant", 'admin'])
-  @Patch('snapshot')
+  @Post('snapshots')
   async addNewBusinessSnapshot(
     @Param('userId') userId: string,
     @Body() data: BusinessDevelopmentDto
