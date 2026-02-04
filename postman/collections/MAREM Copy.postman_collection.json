@@ -1,0 +1,746 @@
+{
+  "info": {
+    "_postman_id": "58c21058-1641-482e-83d7-28f28f11ceb7",
+    "name": "marem",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const token = pm.response.json().data.token;\r",
+                  "\r",
+                  "if(token){\r",
+                  "    pm.environment.set(\"bearerToken\", token);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "4991ff5c-0265-47fb-8e94-48716bee0b92"
+              }
+            }
+          ],
+          "id": "ea975217-d808-4dff-a511-83bd995fa065",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"admin\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "id": "14a047f0-a6fa-4157-8639-9f970d630e4f",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"admin\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "session",
+          "id": "903baa6e-2dbc-42cf-aa76-e94986077ef2",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "2b27f843-fa1e-4fa7-85cb-eb2d1c8d409c"
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "profile",
+          "item": [
+            {
+              "name": "update asesor profile private",
+              "id": "6b292a84-9e3b-4f9c-a87e-fa0e62b85365",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"phone\": \"081234567890\",\r\n  \"email\": \"budi.santoso@example.com\",\r\n  \"account_number\": \"1370004567890\",\r\n  \"account_name\": \"Budi Santoso\",\r\n  \"nik\": \"3171012001900001\",\r\n  \"organization\": \"PT Teknologi Maju Indonesia\",\r\n  \"position\": \"Senior Backend Developer\",\r\n  \"specialization\": \"Cloud Infrastructure & Security\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{userId}}/expertise-profile/private",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "{{userId}}",
+                    "expertise-profile",
+                    "private"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update asesor public profile",
+              "id": "bdc36567-aad1-4a3b-9a41-008589b493ad",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"profile\": null,\r\n  \"name\": \"Dr. Budi Santoso, M.Kom\",\r\n  \"position\": \"Senior Software Architect\",\r\n  \"organization\": \"PT Inovasi Digital Nusantara\",\r\n  \"role\": \"asesor\",\r\n  \"specialization\": \"Cloud Computing & Cybersecurity\",\r\n  \"bio\": \"Praktisi IT dengan pengalaman lebih dari 15 tahun di bidang infrastruktur cloud dan keamanan jaringan. Aktif sebagai konsultan transformasi digital.\",\r\n  \"linkedIn\": \"https://www.linkedin.com/in/budisantoso-expert\",\r\n  \"portofolio\": \"https://budisantoso.dev\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{userId}}/expertise-profile/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "{{userId}}",
+                    "expertise-profile",
+                    "public"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update participant profile",
+              "id": "87a5cea5-2c44-494a-aa8e-258d61d65713",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"profile\": null,\r\n    \"name\": \"Senja Abadi\",\r\n    \"participant_profile\": {\r\n        \"clasification\": \"go_online\",\r\n        \"nik\": \"3374102005900001\",\r\n        \"npwp\": \"8233456789123000\",\r\n        \"gender\": \"male\",\r\n        \"last_education\": \"S1 Manajemen Bisnis\"\r\n    },\r\n    \"participat_bussiness\": {\r\n        \"city\": \"Semarang\",\r\n        \"street\": \"Jl. Pahlawan No. 45\",\r\n        \"province\": \"Jawa Tengah\",\r\n        \"subdistrict\": \"Semarang Selatan\",\r\n        \"postal_code\": \"50241\",\r\n        \"source_joined\": \"Instagram Ads\",\r\n        \"start_year\": 2020\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/{{participantId}}/business-profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "users",
+                    "{{participantId}}",
+                    "business-profile"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "08ee1dcb-ede5-427a-a525-a4c9f48f1846"
+        },
+        {
+          "name": "list",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const user = pm.response.json().data[0];\r",
+                  "\r",
+                  "if(user){\r",
+                  "    pm.environment.set(\"userId\", user.id);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "54582221-460d-43b6-a2f7-251877feb042"
+              }
+            }
+          ],
+          "id": "3eeb2e2e-dfa8-4b8e-9b60-76bb87814318",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"admin@gmail.com\",\r\n    \"password\": \"admin\"\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const id = pm.response.json().data.id\r",
+                  "\r",
+                  "if (id){\r",
+                  "    pm.environment.set(\"userId\", id)\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "b1f9fdde-ff8f-46a9-bdf7-35d5b57a6950"
+              }
+            }
+          ],
+          "id": "1d169e83-d7d1-4072-82b3-4439773602b2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"asesor@gmail.com\",\r\n    \"role\": \"asesor\",\r\n    \"password\": \"Admin123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "id": "b4ebc676-415c-44fd-a583-48209fe78aa1",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "detail",
+          "id": "87ed8605-4453-4539-ab6c-99ba0f7c9c2c",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "3321078a-8997-4abd-bcb4-6011ae5aad54",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "c16ee7a0-a0c0-4919-b319-d491e6e83d30"
+    },
+    {
+      "name": "course",
+      "item": [
+        {
+          "name": "modules",
+          "item": [
+            {
+              "name": "list",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const module = pm.response.json().data[0]\r",
+                      "\r",
+                      "if(module){\r",
+                      "    pm.environment.set('moduleId', module.id)\r",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
+                    "id": "6a9c1f62-8510-448d-b64b-40b96bc4e660"
+                  }
+                }
+              ],
+              "id": "4f550776-a24e-4673-a155-41ecb29095cb",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"Bootcamp Fullstack JavaScript 2026\",\r\n  \"description\": \"Kursus intensif selama 3 bulan mencakup Node.js, React, dan DevOps dasar untuk pemula hingga mahir.\",\r\n  \"target_mentor_ids\": [\r\n    \r\n  ],\r\n  \"classification\": \"go_online\", \r\n  \"audience_target\": \"participant\",\r\n  \"is_published\": true\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/courses/{{courseId}}/modules",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "courses",
+                    "{{courseId}}",
+                    "modules"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "create",
+              "id": "801dc657-769d-42de-9edc-cc35e3346b71",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"modules\": [\r\n    {\r\n      \"id\": \"dcec3f10-743e-4cf5-ba6d-e9c231c9efee\",\r\n      \"title\": \"Module 1: Fundamental Teori\",\r\n      \"description\": \"Pengenalan konsep dasar sebelum praktek.\",\r\n      \"sequence\": 1,\r\n      \"items\": [\r\n        {\r\n          \"id\": \"ac400423-081e-4ec9-a442-9a5509ba94cb\",\r\n          \"title\": \"Pengantar Ekosistem Digital\",\r\n          \"category\": \"article\",\r\n          \"sequence\": 1,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"article\",\r\n            \"content\": \"<h1>Selamat Datang</h1><p>Ini adalah materi pembuka tentang ekosistem digital.</p>\",\r\n            \"estimated_read_time_minutes\": 5\r\n          }\r\n        },\r\n        {\r\n          \"id\": \"ecee8b5c-9f27-40bc-ad91-a74a0384e402\",\r\n          \"title\": \"Video: Sejarah Internet\",\r\n          \"category\": \"article\",\r\n          \"sequence\": 2,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"article\",\r\n            \"content\": \"<iframe src='https://youtube.com/embed/xyz123'></iframe>\",\r\n            \"estimated_read_time_minutes\": 15\r\n          }\r\n        },\r\n        {\r\n          \"id\": \"ec00d9fd-2542-4150-ba09-4eda2983443f\",\r\n          \"title\": \"Pre-Test Pemahaman Awal\",\r\n          \"category\": \"quiz\",\r\n          \"sequence\": 3,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"quiz\",\r\n            \"title\": \"Pre-Test Module 1\",\r\n            \"time_limit_minutes\": 10,\r\n            \"passing_score\": 60,\r\n            \"questions\": [\r\n              {\r\n                \"id\": \"137f3a13-05df-4982-b461-4b97853f850c\",\r\n                \"question_text\": \"HTML singkatan dari?\",\r\n                \"points\": 50,\r\n                \"options\": [\r\n                  { \"id\": \"3a31efc5-64d6-4c96-9201-f37b7e2c34fb\", \"option_text\": \"HyperText Markup Language\", \"is_correct\": true },\r\n                  { \"id\": \"19035b67-33c9-4606-9150-70b2eefb5ca9\", \"option_text\": \"HighText Machine Language\", \"is_correct\": false }\r\n                ]\r\n              },\r\n              {\r\n                \"id\": \"abcfa024-8751-488f-89d3-f76e0ac04998\",\r\n                \"question_text\": \"HTTP adalah protokol untuk transfer email.\",\r\n                \"points\": 50,\r\n                \"options\": [\r\n                  { \"id\": \"d56c5c2a-ca54-416c-a59e-c9b0e8409173\", \"option_text\": \"Benar\", \"is_correct\": false },\r\n                  { \"id\": \"6264d4ea-da84-4b4e-aa7e-3fb78e4a0af5\", \"option_text\": \"Salah\", \"is_correct\": true }\r\n                ]\r\n              }\r\n            ]\r\n          }\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"id\": \"7f03107d-621c-48ea-bf0c-810d5ee5c5bd\",\r\n      \"title\": \"Module 2: Praktikum Coding\",\r\n      \"description\": \"Fokus pada pengerjaan tugas coding dan evaluasi.\",\r\n      \"sequence\": 2,\r\n      \"items\": [\r\n        {\r\n          \"id\": \"bf25ad21-ba2d-43bd-bbb5-d8749d72325b\",\r\n          \"title\": \"Tugas 1: Setup Environment\",\r\n          \"category\": \"assignment\",\r\n          \"sequence\": 1,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"assignment\",\r\n            \"assignment_type\": \"pre_test\",\r\n            \"instructions\": \"Install Node.js dan kirimkan screenshot versi terminal Anda.\",\r\n            \"due_date\": \"2025-12-31T23:59:00Z\",\r\n            \"max_score\": 100,\r\n            \"submission_format\": \"file_upload\"\r\n          }\r\n        },\r\n        {\r\n          \"id\": \"bc346489-321d-497c-a7fe-9b5a1f8922cb\",\r\n          \"title\": \"Tugas 2: Repository Github\",\r\n          \"category\": \"assignment\",\r\n          \"sequence\": 2,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"assignment\",\r\n            \"assignment_type\": \"post_test\",\r\n            \"instructions\": \"Push kode Hello World ke Github dan lampirkan link repository.\",\r\n            \"due_date\": \"2025-12-31T23:59:00Z\",\r\n            \"max_score\": 100,\r\n            \"submission_format\": \"link_submission\"\r\n          }\r\n        }\r\n      ]\r\n    },\r\n    {\r\n      \"id\": \"ae8a30b2-89b8-4f9d-82ee-3780ea9de678\",\r\n      \"title\": \"Module 3: Evaluasi Akhir\",\r\n      \"description\": null,\r\n      \"sequence\": 3,\r\n      \"items\": [\r\n        {\r\n          \"id\": \"b4628b30-3bb9-4d12-8d75-998e46efdef5\",\r\n          \"title\": \"Ujian Akhir Semester\",\r\n          \"category\": \"quiz\",\r\n          \"sequence\": 1,\r\n          \"is_published\": false,\r\n          \"data\": {\r\n            \"category\": \"quiz\",\r\n            \"title\": \"Final Exam\",\r\n            \"time_limit_minutes\": 60,\r\n            \"passing_score\": 75,\r\n            \"questions\": [\r\n              {\r\n                \"id\": \"c540680f-af41-42e4-b1ac-597245a85a04\",\r\n                \"question_text\": \"Manakah framework CSS yang populer?\",\r\n                \"points\": 30,\r\n                \"options\": [\r\n                  { \"id\": \"11111111-af41-42e4-b1ac-597245a85a04\", \"option_text\": \"Django\", \"is_correct\": false },\r\n                  { \"id\": \"22222222-af41-42e4-b1ac-597245a85a04\", \"option_text\": \"Laravel\", \"is_correct\": false },\r\n                  { \"id\": \"33333333-af41-42e4-b1ac-597245a85a04\", \"option_text\": \"Tailwind\", \"is_correct\": true }\r\n                ]\r\n              },\r\n              {\r\n                \"id\": \"875451fb-7ea3-4e6c-8336-4c7f6a35bdf8\",\r\n                \"question_text\": \"JavaScript berjalan di sisi client saja.\",\r\n                \"points\": 30,\r\n                \"options\": [\r\n                  { \"id\": \"44444444-7ea3-4e6c-8336-4c7f6a35bdf8\", \"option_text\": \"Benar\", \"is_correct\": false },\r\n                  { \"id\": \"55555555-7ea3-4e6c-8336-4c7f6a35bdf8\", \"option_text\": \"Salah\", \"is_correct\": true }\r\n                ]\r\n              },\r\n              {\r\n                \"id\": \"00c1e007-752b-4275-8c89-6598f4e78d7c\",\r\n                \"question_text\": \"Apa kegunaan Git?\",\r\n                \"points\": 40,\r\n                \"options\": [\r\n                  { \"id\": \"66666666-752b-4275-8c89-6598f4e78d7c\", \"option_text\": \"Version Control\", \"is_correct\": true },\r\n                  { \"id\": \"77777777-752b-4275-8c89-6598f4e78d7c\", \"option_text\": \"Code Editor\", \"is_correct\": false },\r\n                  { \"id\": \"88888888-752b-4275-8c89-6598f4e78d7c\", \"option_text\": \"Database\", \"is_correct\": false }\r\n                ]\r\n              }\r\n            ]\r\n          }\r\n        },\r\n        {\r\n          \"id\": \"72832650-3e41-4e4a-9001-5d4decd87c1d\",\r\n          \"title\": \"Esai Refleksi\",\r\n          \"category\": \"assignment\",\r\n          \"sequence\": 2,\r\n          \"is_published\": true,\r\n          \"data\": {\r\n            \"category\": \"assignment\",\r\n            \"assignment_type\": \"post_test\",\r\n            \"instructions\": \"Tuliskan pengalaman belajar Anda minimal 500 kata.\",\r\n            \"due_date\": \"2026-01-15T12:00:00Z\",\r\n            \"max_score\": 50,\r\n            \"submission_format\": \"text_entry\"\r\n          }\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/courses/{{courseId}}/modules",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "courses",
+                    "{{courseId}}",
+                    "modules"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "detail module",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "const item = pm.response.json().data[0]\r",
+                      "\r",
+                      "if(item) {\r",
+                      "    pm.environment.set(\"moduleItemId\", item.id)\r",
+                      "}"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
+                    "id": "f021838b-b76c-496e-b85a-54eefecdc6cc"
+                  }
+                }
+              ],
+              "id": "ccfc3af9-c3e1-4c78-bb65-b8e184188d34",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "c",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/courses/{{courseId}}/modules/{{moduleId}}/items",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "courses",
+                    "{{courseId}}",
+                    "modules",
+                    "{{moduleId}}",
+                    "items"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "detail item",
+              "id": "a753ee9e-2445-49bb-828f-41eea7c442e5",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": ""
+                }
+              },
+              "response": []
+            }
+          ],
+          "id": "f23f4a64-cb33-4d65-a28d-0157924e12e4"
+        },
+        {
+          "name": "create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const responseBody = pm.response.json();\r",
+                  "\r",
+                  "if(responseBody.data.id){\r",
+                  "    pm.environment.set('courseId', responseBody.data.id)\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "id": "91c72b4c-bb30-4fa6-bdd5-e7a23e6def5c"
+              }
+            }
+          ],
+          "id": "245c58cb-69a6-4fa3-afb7-29ae96af1a81",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"testing\",\r\n  \"description\": \"Kursus intensif selama 3 bulan mencakup Node.js, React, dan DevOps dasar untuk pemula hingga mahir.\",\r\n  \"target_mentor_ids\": [\r\n    \r\n  ],\r\n  \"classification\": \"go_online\", \r\n  \"audience_target\": \"participant\",\r\n  \"is_published\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update",
+          "id": "92eb26ce-1795-4154-ae2a-d2783710ff51",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Bootcamp Fullstack JavaScript 2026\",\r\n  \"description\": \"Kursus intensif selama 3 bulan mencakup Node.js, React, dan DevOps dasar untuk pemula hingga mahir.\",\r\n  \"target_mentor_ids\": [\r\n    \r\n  ],\r\n  \"classification\": \"go_online\", \r\n  \"audience_target\": \"participant\",\r\n  \"is_published\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "courses",
+                "{{courseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list",
+          "id": "34923c9e-1d84-4e3e-9e1f-ee661f7d655d",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete",
+          "id": "1d622db5-710f-4b2a-8ab5-637a7e351076",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Bootcamp Fullstack JavaScript 2026\",\r\n  \"description\": \"Kursus intensif selama 3 bulan mencakup Node.js, React, dan DevOps dasar untuk pemula hingga mahir.\",\r\n  \"target_mentor_ids\": [\r\n    \r\n  ],\r\n  \"classification\": \"go_online\", \r\n  \"audience_target\": \"participant\",\r\n  \"is_published\": true\r\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/courses/{{courseId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "courses",
+                "{{courseId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "4786e69f-48b3-42b7-9a3f-1ae91f2771f0"
+    },
+    {
+      "name": "bussines profile",
+      "item": [
+        {
+          "name": "summary development",
+          "id": "50f5a8d5-8c9f-49f5-a30e-e75bcea9f4e3",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "profile",
+          "id": "36b369c3-ab62-4f85-99e8-8f472554e17f",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/:userId/bussines/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":userId",
+                "bussines",
+                "profile"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{participantId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "snapshot",
+          "id": "374826fa-76aa-4549-a522-ed21ba935b0f",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"date\": \"2026-03-25T14:30:00.000Z\",\r\n  \"phase\": \"scale_up\",\r\n  \"employees\": 12,\r\n  \"revenue\": 45000000,\r\n  \"capacity\": 1000,\r\n  \"is_legalized\": true,\r\n  \"has_financial_records\": true,\r\n  \"bussines_permits\": [\r\n    {\r\n      \"permit_type\": \"nib\",\r\n      \"permit_number\": \"1234567890123\"\r\n    },\r\n    {\r\n      \"permit_type\": \"halal\",\r\n      \"permit_number\": \"ID3211000456789\"\r\n    },\r\n    {\r\n      \"permit_type\": \"pirt\",\r\n      \"permit_number\": \"P-IRT20230325\"\r\n    }\r\n  ],\r\n  \"social_medias\": [\r\n    {\r\n      \"platform\": \"instagram\",\r\n      \"label\": \"@toko_kita\",\r\n      \"url\": \"https://instagram.com/toko_kita\"\r\n    },\r\n    {\r\n      \"platform\": \"linkedin\",\r\n      \"label\": \"PT Toko Kita Sejahtera\",\r\n      \"url\": \"https://linkedin.com/company/tokokita\"\r\n    }\r\n  ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/:userId/bussines/snapshots",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ":userId",
+                "bussines",
+                "snapshots"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "{{participantId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "715923c1-d1c7-4bfd-9fcb-017bdf92dd23"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "id": "8ba7d5a9-175d-44f4-881d-dcbbc225d865",
+      "key": "baseUrl",
+      "value": "http://localhost:3005"
+    }
+  ]
+}
