@@ -7,7 +7,6 @@ import throttleConfig from "./throttle.config";
 import tokenConfig from "./token.config";
 import storageConfig from "./storage.config";
 import cacheConfig from "./cache.config";
-import deltaConfig from "./delta.config";
 import notificationConfig from "./notification.config";
 
 export type EnvironmetnType = typeof environtment;
@@ -22,7 +21,6 @@ export default ConfigModule.forRoot({
         tokenConfig,
         storageConfig,
         cacheConfig,
-        deltaConfig,
         notificationConfig
     ],
     isGlobal: true,

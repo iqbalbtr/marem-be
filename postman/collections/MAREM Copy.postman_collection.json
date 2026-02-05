@@ -199,17 +199,38 @@
             {
               "listen": "test",
               "script": {
+                "id": "54582221-460d-43b6-a2f7-251877feb042",
                 "exec": [
-                  "const user = pm.response.json().data[0];\r",
+                  "const users = pm.response.json().data;\r",
                   "\r",
-                  "if(user){\r",
-                  "    pm.environment.set(\"userId\", user.id);\r",
+                  "if (users) {\r",
+                  "    for (const user of users) {\r",
+                  "        switch (user.role) {\r",
+                  "            case \"asesor\":\r",
+                  "                pm.environment.set('asesorId', user.id)\r",
+                  "                break;\r",
+                  "            case 'participant':\r",
+                  "                pm.environment.set('participantId', user.id)\r",
+                  "                break;\r",
+                  "        }\r",
+                  "    }\r",
                   "}"
                 ],
                 "type": "text/javascript",
                 "packages": {},
-                "requests": {},
-                "id": "54582221-460d-43b6-a2f7-251877feb042"
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "0184fd0e-d5aa-4b28-b593-403d35c4849e",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],

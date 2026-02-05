@@ -5,7 +5,6 @@ import { BadRequestException, LogLevel, ValidationPipe } from '@nestjs/common';
 import { ErrorFilter } from './common/filters/error.filter';
 import config from '@config/app.config';
 import helmet from 'helmet';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
 import { ValidationError } from 'class-validator';
 import { Decimal } from '@prisma/client/runtime/index-browser';
@@ -22,8 +21,6 @@ async function bootstrap() {
       origin: [
         config().app.client.url || 'http://localhost:3000',
         'http://localhost:3000',
-        /\.tomsirapps\.com$/,
-        /\.localhost(:[0-9]+)?$/
       ],
       credentials: true,
     },
@@ -100,19 +97,6 @@ async function bootstrap() {
   // Global error filter
   app.useGlobalFilters(new ErrorFilter());
 
-
-  // Disbale if production
-  if (config().app.node_env !== 'prod') {
-    const config = new DocumentBuilder()
-      .setTitle('Portal Desa Negmplak Api')
-      .setDescription('For developing only')
-      .setVersion('1.0')
-      .build();
-    const documentFactory = () => SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, documentFactory, {
-      jsonDocumentUrl: 'swagger/json',
-    });
-  }
 
   await app.listen(config().app.port ?? 3000);
 }
