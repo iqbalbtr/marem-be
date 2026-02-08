@@ -1,27 +1,30 @@
 import { PrismaService } from '@database/prisma.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserQueryDto } from './dto/user-query.dto';
 import { Prisma } from '@prisma'; // Pastikan import dari client
 import { PaginationHelper } from 'src/helpers/pagination.helper';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { MailService } from 'src/modules/mail/mail.service';
+import { PermissionHelper } from 'src/helpers/permission.helper';
+import { UserToken } from '@models/token.model';
 
 @Injectable()
 export class UserService {
 
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly mailService: MailService,
   ) { }
 
   async findAll(query: UserQueryDto) {
 
-    // Gunakan 'usersWhereInput' karena nama modelnya 'users'
-    let queryBuilder: Prisma.usersWhereInput = {
+    let queryBuilder = PaginationHelper.getWhereQuery('users', {
       OR: [
         { name: { contains: query.search || '' } },
         { email: { contains: query.search || '' } },
       ]
-    }
+    })
 
     if (query.role) {
       queryBuilder.role = query.role;
@@ -35,7 +38,7 @@ export class UserService {
       page: query.page,
       per_page: query.limit,
       prismaService: this.prismaService,
-      table: 'users', // Sesuaikan dengan nama model di schema.prisma
+      table: 'users',
       whereQuery: queryBuilder,
       selectQuery: {
         id: true,
@@ -84,12 +87,14 @@ export class UserService {
         email: data.email
       }
     });
+
     if (emailExist > 0) {
       throw new NotFoundException('email already used');
     }
+
     const password = await bcrypt.hash(data.password, 10);
 
-    return await this.prismaService.users.create({
+    const user = await this.prismaService.users.create({
       data: {
         name: '',
         email: data.email,
@@ -105,9 +110,13 @@ export class UserService {
         is_verified: true,
       }
     });
+
+    await this.mailService.sendVerificationAccount(data.email, data.password!);
+
+    return user;
   }
 
-  async update(id: string, data: UpdateUserDto) {
+  async update(userToken: UserToken, id: string, data: UpdateUserDto) {
     const user = await this.prismaService.users.findUnique({
       where: {
         id: id
@@ -116,6 +125,10 @@ export class UserService {
 
     if (!user) {
       throw new NotFoundException('user not found');
+    }
+
+    if (!PermissionHelper.canManageResource(userToken, id)) {
+      throw new ForbiddenException('you dont have permission to update this user');
     }
 
     if (data.email && data.email !== user.email) {

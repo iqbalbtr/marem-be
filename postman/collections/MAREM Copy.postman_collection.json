@@ -14,6 +14,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "4991ff5c-0265-47fb-8e94-48716bee0b92",
                 "exec": [
                   "const token = pm.response.json().data.token;\r",
                   "\r",
@@ -23,8 +24,19 @@
                 ],
                 "type": "text/javascript",
                 "packages": {},
-                "requests": {},
-                "id": "4991ff5c-0265-47fb-8e94-48716bee0b92"
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "66c7e496-5d46-4261-b11f-1a393cde8ff6",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -84,7 +96,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": ""
+              "raw": "{{baseUrl}}/auth/session",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "session"
+              ]
             }
           },
           "response": []
@@ -99,14 +118,14 @@
           "name": "profile",
           "item": [
             {
-              "name": "update asesor profile private",
+              "name": "update asesor profile",
               "id": "6b292a84-9e3b-4f9c-a87e-fa0e62b85365",
               "request": {
                 "method": "PATCH",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"phone\": \"081234567890\",\r\n  \"email\": \"budi.santoso@example.com\",\r\n  \"account_number\": \"1370004567890\",\r\n  \"account_name\": \"Budi Santoso\",\r\n  \"nik\": \"3171012001900001\",\r\n  \"organization\": \"PT Teknologi Maju Indonesia\",\r\n  \"position\": \"Senior Backend Developer\",\r\n  \"specialization\": \"Cloud Infrastructure & Security\"\r\n}",
+                  "raw": "{\r\n    \"profile\": null,\r\n    \"name\": \"Dr. Budi Santoso, M.Kom\",\r\n    \"private\": {\r\n        \"phone\": \"081234567890\",\r\n        \"email\": \"budi.santoso@example.com\",\r\n        \"account_number\": \"1370004567890\",\r\n        \"account_name\": \"Budi Santoso\",\r\n        \"nik\": \"3171012001900001\",\r\n        \"organization\": \"PT Teknologi Maju Indonesia\",\r\n        \"position\": \"Senior Backend Developer\",\r\n        \"specialization\": \"Cloud Infrastructure & Security\"\r\n    },\r\n    \"public\": {\r\n        \"position\": \"Senior Software Architect\",\r\n        \"organization\": \"PT Inovasi Digital Nusantara\",\r\n        \"specialization\": \"Cloud Computing & Cybersecurity\",\r\n        \"bio\": \"Praktisi IT dengan pengalaman lebih dari 15 tahun di bidang infrastruktur cloud dan keamanan jaringan. Aktif sebagai konsultan transformasi digital.\",\r\n        \"linkedIn\": \"https://www.linkedin.com/in/budisantoso-expert\",\r\n        \"portofolio\": \"https://budisantoso.dev\"\r\n    }\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -114,47 +133,22 @@
                   }
                 },
                 "url": {
-                  "raw": "{{baseUrl}}/api/users/{{userId}}/expertise-profile/private",
+                  "raw": "{{baseUrl}}/api/users/:userId/expertise-profile",
                   "host": [
                     "{{baseUrl}}"
                   ],
                   "path": [
                     "api",
                     "users",
-                    "{{userId}}",
-                    "expertise-profile",
-                    "private"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "update asesor public profile",
-              "id": "bdc36567-aad1-4a3b-9a41-008589b493ad",
-              "request": {
-                "method": "PATCH",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"profile\": null,\r\n  \"name\": \"Dr. Budi Santoso, M.Kom\",\r\n  \"position\": \"Senior Software Architect\",\r\n  \"organization\": \"PT Inovasi Digital Nusantara\",\r\n  \"role\": \"asesor\",\r\n  \"specialization\": \"Cloud Computing & Cybersecurity\",\r\n  \"bio\": \"Praktisi IT dengan pengalaman lebih dari 15 tahun di bidang infrastruktur cloud dan keamanan jaringan. Aktif sebagai konsultan transformasi digital.\",\r\n  \"linkedIn\": \"https://www.linkedin.com/in/budisantoso-expert\",\r\n  \"portofolio\": \"https://budisantoso.dev\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
+                    ":userId",
+                    "expertise-profile"
+                  ],
+                  "variable": [
+                    {
+                      "key": "userId",
+                      "value": "{{asesorId}}",
+                      "uuid": "1c4b9849-c9ff-47fd-a1a3-78edab970543"
                     }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/users/{{userId}}/expertise-profile/public",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "users",
-                    "{{userId}}",
-                    "expertise-profile",
-                    "public"
                   ]
                 }
               },
@@ -278,6 +272,7 @@
             {
               "listen": "test",
               "script": {
+                "id": "b1f9fdde-ff8f-46a9-bdf7-35d5b57a6950",
                 "exec": [
                   "const id = pm.response.json().data.id\r",
                   "\r",
@@ -287,8 +282,19 @@
                 ],
                 "type": "text/javascript",
                 "packages": {},
-                "requests": {},
-                "id": "b1f9fdde-ff8f-46a9-bdf7-35d5b57a6950"
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "id": "e0193566-e609-4a4e-a6ca-7f083aac56f8",
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -298,7 +304,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"asesor@gmail.com\",\r\n    \"role\": \"asesor\",\r\n    \"password\": \"Admin123\"\r\n}",
+              "raw": "{\r\n    \"email\": \"iqbalbahtiar045@gmail.com\",\r\n    \"role\": \"participant\",\r\n    \"password\": \"Admin123\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

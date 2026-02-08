@@ -21,6 +21,14 @@ export class Utils {
         res.end(buffer);
     }
 
+    static ResponseRedirect(url: string, message?: string, platform?: string) {
+        return {
+            url,
+            message: message || '',
+            platform: platform || 'web',
+        }
+    }
+
 
     static dateConvert(val: number | Date | string) {
 
@@ -41,28 +49,5 @@ export class Utils {
         return val == 'null' || !val || val == 'undefined' ? 'Tidak Diketahui' : val
     }
 
-    static getWarrantyEndDate(startDate: Date, long: number) {
 
-        return new Date(startDate.getTime() + (long * 24 * 60 * 60 * 1000));
-    }
-
-    static calculateCost(total: number, amount: number, type: CostType) {
-        let result = {
-            totalDeduction: 0,
-            finalCost: total,
-        }
-
-        if (type === CostType.percentage) {
-            result.totalDeduction = (total * (amount / 100));
-        }
-
-        if (type === CostType.fixed) {
-            result.totalDeduction = amount;
-        }
-
-        result.finalCost = total - result.totalDeduction;
-
-        return result
-
-    }
 }

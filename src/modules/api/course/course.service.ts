@@ -1,10 +1,8 @@
 import { PrismaService } from '@database/prisma.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
-import { PaginationDto } from 'src/shared/pagination-dto';
 import { PaginationHelper } from 'src/helpers/pagination.helper';
 import { QueryCourseDto } from './dto/query-course.dtp';
-import { Prisma } from '@prisma';
 
 @Injectable()
 export class CourseService {
@@ -39,18 +37,10 @@ export class CourseService {
 
     async createCourse(data: CreateCourseDto) {
 
-        if (data.target_mentor_ids && data.target_mentor_ids.length > 0) {
-            await this.validateMentors(data.target_mentor_ids);
-        }
+        await this.validateMentors(data.mentor_id);
 
         const createdCourse = await this.prismaService.courses.create({
-            data: {
-                title: data.title,
-                description: data.description,
-                classification: data.classification,
-                is_published: data.is_published,
-                audience_target: data.audience_target,
-            }
+            data
         });
         return createdCourse;
     }
@@ -60,24 +50,16 @@ export class CourseService {
         const exist = await this.prismaService.courses.findUnique({
             where: { id: courseId }
         });
-        
+
         if (!exist) {
             throw new BadRequestException('course not found.');
         }
 
-        if (data.target_mentor_ids && data.target_mentor_ids.length > 0) {
-            await this.validateMentors(data.target_mentor_ids);
-        }
+        await this.validateMentors(data.mentor_id);
 
         return this.prismaService.courses.update({
             where: { id: courseId },
-            data: {
-                title: data.title,
-                description: data.description,
-                classification: data.classification,
-                is_published: data.is_published,
-                audience_target: data.audience_target,
-            }
+            data: data
         });
     }
 
@@ -94,27 +76,19 @@ export class CourseService {
         });
     }
 
-    private async validateMentors(mentorIds: string[]) {
+    private async validateMentors(mentorId: string) {
 
-        const allMentors = await this.prismaService.users.findMany({
+        const count = await this.prismaService.users.count({
             where: {
-                id: { in: mentorIds },
-                role: 'mentor'
-            },
-            include: {
-                assesor_profile: true,
+                id: mentorId,
+                role: {
+                    in: ['mentor', 'admin', 'asesor']
+                }
             }
         });
 
-        if (allMentors.length !== mentorIds.length) {
-            throw new BadRequestException('one or more mentor IDs are invalid.');
+        if (count === 0) {
+            throw new NotFoundException(`mentor with id ${mentorId} not found or invalid role.`);
         }
-
-        allMentors.forEach(mentor => {
-            if (!mentor.assesor_profile) {
-                throw new BadRequestException(`user with ID ${mentor.id} is not registered as an assesor.`);
-            }
-        });
-
     }
 }

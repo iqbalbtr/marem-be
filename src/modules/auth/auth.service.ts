@@ -17,7 +17,6 @@ export class AuthService {
 
     async loginUser(email: string, password: string) {
 
-        // Akses model 'users'
         const user = await this.prismaService.users.findUnique({
             where: {
                 email: email
@@ -38,20 +37,20 @@ export class AuthService {
             uuid: uuidv4(),
             email: user.email,
             role: user.role,
-            name: user.name
+            name: user.name,
+            user_id: user.id
         } as UserToken
 
         const token = await this.jwtService.signAsync(payload, {
             expiresIn: '7d'
         });
 
-        // Akses model 'user_tokens'
         await this.prismaService.user_tokens.create({
             data: {
                 id: payload.uuid,
-                user_id: user.id,      // Field snake_case
+                user_id: user.id,     
                 expired: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-                last_logged: new Date() // Field snake_case
+                last_logged: new Date()
             }
         });
 
@@ -60,15 +59,14 @@ export class AuthService {
             name: user.name,
             email: user.email,
             role: user.role,
-            is_active: user.is_active,     // Field snake_case
-            is_verified: user.is_verified, // Field snake_case
+            is_active: user.is_active,    
+            is_verified: user.is_verified,
             token: token
         }
     }
 
     async logoutUser(user: UserToken) {
 
-        // Akses model 'user_tokens'
         const tokenExist = await this.prismaService.user_tokens.findFirst({
             where: {
                 id: user.uuid
@@ -87,6 +85,32 @@ export class AuthService {
     }
 
     async getCurrentSession(user: UserToken) {
-        return user
+        const userData = await this.prismaService.users.findUnique({
+            where: {
+                id: user.user_id
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                gender: true,
+                is_active: true,
+                is_verified: true,
+                assesor_profile: true,
+                participant_profile: {
+                    include: {
+                        business_profile: true
+                    }
+                }
+            }
+        });
+
+        if(!userData)
+            throw new NotFoundException('user not found');
+
+        return {
+            ...userData
+        }
     }
 }

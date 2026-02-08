@@ -1,0 +1,82 @@
+model coaching_session {
+    id    String @id @default(uuid())
+    title String
+
+    start_time DateTime
+    actual_start_time   DateTime?
+    end_time   DateTime
+    actual_end_time     DateTime?
+
+    coaching_type coaching_type
+
+    meeting_link     String
+    meeting_platform meenting_platforms
+    meeting_password String?
+
+    audience_type  audience_target
+    classification classification?
+    regional       String?
+    stage          stage
+
+    status session_status @default(scheduled)
+
+    mentor_id String?
+    mentor    users?  @relation(fields: [mentor_id], references: [id], onDelete: SetNull)
+
+    created_at        DateTime            @default(now())
+    updated_at        DateTime            @updatedAt
+    coaching_presence coaching_presence[]
+}
+
+model coaching_presence {
+    id String @id @default(uuid())
+
+    session_id     String
+    participant_id String
+
+    status presence_status @default(absent)
+
+    first_joined_at DateTime?
+    joined_at DateTime?
+
+    feedback_notes String? @db.Text
+
+    session     coaching_session @relation(fields: [session_id], references: [id], onDelete: Cascade)
+    participant users            @relation(fields: [participant_id], references: [id], onDelete: Cascade)
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    @@unique([session_id, participant_id])
+}
+
+enum coaching_type {
+    regional
+    classification
+}
+
+enum presence_status {
+    present
+    absent
+    excused
+    late
+}
+
+enum stage {
+    regional
+    national
+}
+
+enum session_status {
+    scheduled
+    ongoing
+    completed
+    canceled
+}
+
+enum meenting_platforms {
+    zoom
+    google_meet
+    ms_teams
+    other
+}

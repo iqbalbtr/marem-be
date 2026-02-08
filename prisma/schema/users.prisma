@@ -33,9 +33,13 @@ model users {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
-    user_tokens         user_tokens[]
-    assesor_profile     assesor_profile?
-    participant_profile participant_profile?
+    user_tokens           user_tokens[]
+    assesor_profile       assesor_profile?
+    participant_profile   participant_profile?  @relation("ParticipantUser")
+    mentored_participants participant_profile[] @relation("ParticipantMentor")
+    courses               courses[]
+    coaching_sessions     coaching_session[]
+    coaching_presences    coaching_presence[]
 }
 
 model assesor_profile {
@@ -75,8 +79,11 @@ model participant_profile {
     postal_code   String
     source_joined String
 
+    mentor_id String?
+    mentor    users?  @relation("ParticipantMentor", fields: [mentor_id], references: [id], onDelete: SetNull)
+
     user_id String @unique
-    user    users  @relation(fields: [user_id], references: [id])
+    user    users  @relation("ParticipantUser", fields: [user_id], references: [id])
 
     business_profile business_profile?
 
