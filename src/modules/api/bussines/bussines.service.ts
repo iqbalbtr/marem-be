@@ -3,6 +3,7 @@ import { PrismaService } from '@database/prisma.service';
 import { BusinessProfileDto } from './dto/update-bussines.dto';
 import { BusinessDevelopmentDto } from './dto/bussines-development.dto';
 import { business_developments, Prisma } from '@prisma';
+import CommonHelper from 'src/helpers/common.helper';
 
 type GrowthData = {
     last_month_increase: string;
@@ -136,8 +137,11 @@ export class BusinessService {
             capacity: Number(dev.capacity)
         }));
 
+        const lastDevelopment = CommonHelper.getLastData(developments);
+
         return {
             developments: safeDevelopments,
+            last_development: lastDevelopment,
             summary,
         };
     }
