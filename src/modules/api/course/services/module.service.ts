@@ -1,6 +1,6 @@
 import { PrismaService } from '@database/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateModuleDto, QuizDataDto, QuizOptionDto } from './dto/create-module.dto';
+import { CreateModuleDto, QuizDataDto, QuizOptionDto } from '../dto/create-module.dto';
 import { Prisma } from '@prisma';
 
 @Injectable()

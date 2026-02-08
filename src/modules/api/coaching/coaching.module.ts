@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { CoachingService } from './coaching.service';
+import { CoachingService } from './services/coaching.service';
 import { CoachingController } from './coaching.controller';
-import { CoachingLivecycleService } from './coaching-livecycle.service';
-import { CoachingPresenceService } from './coaching-presence.service';
+import { CoachingLifecycleService } from './services/coaching-lifecycle.service';
+import { CoachingPresenceService } from './services/coaching-presence.service';
 import { CoachingScheduler } from './coaching.scheduler';
 
 @Module({
   controllers: [CoachingController],
   providers: [
     CoachingService,
-    CoachingLivecycleService,
+    CoachingLifecycleService,
     CoachingPresenceService,
     CoachingScheduler
   ],

@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PermissionHelper } from 'src/helpers/permission.helper';
 
 @Injectable()
-export class CoachingLivecycleService {
+export class CoachingLifecycleService {
 
     constructor(
         private readonly prismaService: PrismaService,

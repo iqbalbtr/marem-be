@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { ProfileService } from './profile.service';
-import { UserService } from './user.service';
+import { ProfileService } from './services/profile.service';
+import { UserService } from './services/user.service';
 import { UserQueryDto } from './dto/user-query.dto';
 import { Utils } from '@utils/index';
 import { UpdateUserDto } from './dto/update-user.dto';

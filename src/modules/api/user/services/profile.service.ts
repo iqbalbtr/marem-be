@@ -1,8 +1,8 @@
 import { PrismaService } from '@database/prisma.service';
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { BatchParticipantProfileDto } from './dto/bussiness-profile.dto';
+import { BatchParticipantProfileDto } from '../dto/bussiness-profile.dto';
 import { StorageUtils } from '@utils/storage.util';
-import { UpdateProfileExpertiseDto } from './dto/expertise-profile.dto';
+import { UpdateProfileExpertiseDto } from '../dto/expertise-profile.dto';
 import { UserToken } from '@models/token.model';
 import { PermissionHelper } from 'src/helpers/permission.helper';
 

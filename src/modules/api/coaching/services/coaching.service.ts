@@ -1,8 +1,8 @@
 import { PrismaService } from '@database/prisma.service';
 import { BadRequestException, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { CreateCoachingDto } from './dto/create-coaching.dto';
+import { CreateCoachingDto } from '../dto/create-coaching.dto';
 import { PaginationHelper } from 'src/helpers/pagination.helper';
-import { QueryCoachingDto } from './dto/query-coaching.dto';
+import { QueryCoachingDto } from '../dto/query-coaching.dto';
 import { UserToken } from '@models/token.model';
 import { PermissionHelper } from 'src/helpers/permission.helper';
 

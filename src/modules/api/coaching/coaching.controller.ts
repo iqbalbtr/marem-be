@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Redirect, UseGuards } from '@nestjs/common';
-import { CoachingService } from './coaching.service';
-import { CoachingPresenceService } from './coaching-presence.service';
-import { CoachingLivecycleService } from './coaching-livecycle.service';
+import { CoachingService } from './services/coaching.service';
+import { CoachingPresenceService } from './services/coaching-presence.service';
+import { CoachingLifecycleService } from './services/coaching-lifecycle.service';
 import { AuthGuard } from '@guards/auth.guard';
 import { QueryCoachingDto } from './dto/query-coaching.dto';
 import { Utils } from '@utils/index';
@@ -9,7 +9,7 @@ import { CreateCoachingDto } from './dto/create-coaching.dto';
 import { User } from '@decorators/auth.decorator';
 import { UserToken } from '@models/token.model';
 import { Role } from '@decorators/role.decorator';
-import { PaginationDto } from 'src/shared/pagination-dto';
+import { PaginationDto } from 'src/common/dto/pagination-dto';
 import { MarkPresenceDto } from './dto/mark-presence.dto';
 
 @UseGuards(AuthGuard)
@@ -19,7 +19,7 @@ export class CoachingController {
   constructor(
     private readonly coachingService: CoachingService,
     private readonly coachingPresenceService: CoachingPresenceService,
-    private readonly coachingLivecycleService: CoachingLivecycleService,
+    private readonly CoachingLifecycleService: CoachingLifecycleService,
   ) { }
 
   @Get()
@@ -103,7 +103,7 @@ export class CoachingController {
     @Param('coachingId') coachingId: string,
     @User() user: UserToken,
   ) {
-    const res = await this.coachingLivecycleService.startCoachingSession(user, coachingId);
+    const res = await this.CoachingLifecycleService.startCoachingSession(user, coachingId);
     return Utils.ResponseRedirect(res.url, 'Redirecting to coaching session', res.platform);
   }
 
@@ -113,7 +113,7 @@ export class CoachingController {
     @Param('coachingId') coachingId: string,
     @User() user: UserToken,
   ) {
-    const res = await this.coachingLivecycleService.endCoachingSession(user, coachingId);
+    const res = await this.CoachingLifecycleService.endCoachingSession(user, coachingId);
     return Utils.ResponseSuccess('success', res);
   }
 

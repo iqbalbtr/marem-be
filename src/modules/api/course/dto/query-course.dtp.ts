@@ -1,6 +1,6 @@
 import { audience_target, classification } from "@prisma";
 import { IsEnum, IsOptional } from "class-validator";
-import { PaginationDto } from "src/shared/pagination-dto";
+import { PaginationDto } from "src/common/dto/pagination-dto";
 
 export class QueryCourseDto extends PaginationDto {
     

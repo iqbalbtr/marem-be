@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { CourseService } from './course.service';
-import { ModuleService } from './module.service';
+import { CourseService } from './services/course.service';
+import { ModuleService } from './services/module.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { Utils } from '@utils/index';
 import { QueryCourseDto } from './dto/query-course.dtp';

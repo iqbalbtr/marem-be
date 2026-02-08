@@ -1,9 +1,9 @@
 import { PrismaService } from '@database/prisma.service';
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { UserQueryDto } from './dto/user-query.dto';
+import { UserQueryDto } from '../dto/user-query.dto';
 import { Prisma } from '@prisma'; // Pastikan import dari client
 import { PaginationHelper } from 'src/helpers/pagination.helper';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { MailService } from 'src/modules/mail/mail.service';
 import { PermissionHelper } from 'src/helpers/permission.helper';

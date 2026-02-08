@@ -2,8 +2,8 @@ import { PrismaService } from "@database/prisma.service";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { coaching_session, coaching_type, Prisma } from "@prisma"; 
 import { PaginationHelper } from "src/helpers/pagination.helper";
-import { PaginationDto } from "src/shared/pagination-dto";
-import { MarkPresenceDto } from "./dto/mark-presence.dto";
+import { PaginationDto } from "src/common/dto/pagination-dto";
+import { MarkPresenceDto } from "../dto/mark-presence.dto";
 
 @Injectable()
 export class CoachingPresenceService {
