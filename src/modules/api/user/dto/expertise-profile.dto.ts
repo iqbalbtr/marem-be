@@ -1,20 +1,7 @@
-import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString, IsUrl, Length } from "class-validator";
-
-enum AsseorRoles {
-    mentor,
-    asesor
-}
+import { Type } from "class-transformer";
+import { IsEmail, IsEnum, IsOptional, IsPhoneNumber, IsString, IsUrl, Length, ValidateNested } from "class-validator";
 
 export class PublicExpertiseProfileDto {
-
-
-    @IsString()
-    @IsOptional()
-    profile?: string;
-
-    @IsString()
-    @Length(3, 100)
-    name: string;
 
     @IsString()
     @Length(3, 100)
@@ -23,9 +10,6 @@ export class PublicExpertiseProfileDto {
     @IsString()
     @Length(3, 100)
     organization: string;
-
-    @IsEnum(AsseorRoles, { message: 'role must be either mentor or asesor' })
-    role: AsseorRoles;
 
     @IsString()
     @Length(3, 100)
@@ -81,4 +65,24 @@ export class PrivateExpertiseProfileDto {
     @IsString()
     @Length(3, 100)
     specialization: string;
+}
+
+export class UpdateProfileExpertiseDto {
+
+    @IsString()
+    @Length(3, 100)
+    name: string;
+
+    @IsString()
+    @IsOptional()
+    profile?: string;
+
+    @ValidateNested()
+    @Type(() => PublicExpertiseProfileDto)
+    public: PublicExpertiseProfileDto;
+
+    @ValidateNested()
+    @Type(() => PrivateExpertiseProfileDto)
+    @IsOptional()
+    private: PrivateExpertiseProfileDto;
 }

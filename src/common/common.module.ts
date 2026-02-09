@@ -67,7 +67,7 @@ import { BullModule } from '@nestjs/bullmq';
                     rootPath: join(resolve(''), storage?.root!),
                     serveRoot: '/upload',
                 }]
-            }   
+            }
         }),
         CacheModule.registerAsync({
             inject: [ConfigService],
@@ -101,7 +101,7 @@ import { BullModule } from '@nestjs/bullmq';
                     }
                 }
             }
-        })
+        }),
     ],
     exports: [
         JwtModule,

@@ -51,7 +51,7 @@ export class AuthGuard implements CanActivate {
     try {
 
       // Get token cache
-      let tokenInCahce: UserToken | undefined = await this.cacheManager.get(token);
+      let tokenInCahce: UserToken | undefined = await this.cacheManager.get(token);      
 
       // Login to handle auth and saving auth to cache
       if (!tokenInCahce) {

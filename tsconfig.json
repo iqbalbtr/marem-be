@@ -64,6 +64,9 @@
       "@views/*": [
         "src/common/views/*"
       ],
+      "@templates/*": [
+        "src/modules/mail/templates/*"
+      ]
     }
   }
 }

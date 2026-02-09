@@ -6,12 +6,14 @@ import { UploadModule } from './modules/upload/upload.module';
 import { ApiModule } from './modules/api/api.module';
 import configModule from '@config/config.module';
 import { LoggerMiddleware } from '@middlewares/logger.middleware';
+import { MailModule } from './modules/mail/mail.module';
 
 @Module({
   imports: [
     configModule,
     DataBaseModule,
     CommonModule,
+    MailModule,
     AuthModule,
     UploadModule,
     ApiModule,

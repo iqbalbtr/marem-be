@@ -1,13 +1,16 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { ProfileService } from './profile.service';
-import { UserService } from './user.service';
+import { ProfileService } from './services/profile.service';
+import { UserService } from './services/user.service';
 import { UserQueryDto } from './dto/user-query.dto';
 import { Utils } from '@utils/index';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BatchParticipantProfileDto } from './dto/bussiness-profile.dto';
-import { PrivateExpertiseProfileDto, PublicExpertiseProfileDto } from './dto/expertise-profile.dto';
+import { PrivateExpertiseProfileDto, PublicExpertiseProfileDto, UpdateProfileExpertiseDto } from './dto/expertise-profile.dto';
 import { AuthGuard } from '@guards/auth.guard';
 import { Role } from '@decorators/role.decorator';
+import { User } from '@decorators/auth.decorator';
+import { UserToken } from '@models/token.model';
+import { CheckOwnership } from '@decorators/check-ownership.decorator';
 
 @UseGuards(AuthGuard)
 @Controller('/api/users')
@@ -49,8 +52,9 @@ export class UserController {
   async updateUser(
     @Param('id') id: string,
     @Body() body: UpdateUserDto,
+    @User() currentUser: UserToken,
   ) {
-    const res = await this.userService.update(id, body);
+    const res = await this.userService.update(currentUser, id, body);
     return Utils.ResponseSuccess('success', res);
   }
 
@@ -64,32 +68,24 @@ export class UserController {
   }
 
   @Role(["admin", "participant"])
-  @Patch(':id/business-profile')
+  @CheckOwnership('userId', 'params')
+  @Patch(':userId/business-profile')
   async updateBusinessProfile(
-    @Param('id') id: string,
+    @Param('userId') userId: string,
     @Body() body: BatchParticipantProfileDto,
   ) {
-    const res = await this.profileService.updateBussinessProfile(id, body);
+    const res = await this.profileService.updateBussinessProfile(userId, body);
     return Utils.ResponseSuccess('success', res);
   }
 
   @Role(["admin", "asesor"])
-  @Patch(':id/expertise-profile/public')
+  @CheckOwnership('userId', 'params')
+  @Patch(':userId/expertise-profile')
   async updateExpertiseProfile(
-    @Param('id') id: string,
-    @Body() body: PublicExpertiseProfileDto,
+    @Param('userId') userId: string,
+    @Body() body: UpdateProfileExpertiseDto,
   ) {
-    const res = await this.profileService.updateExpertisePublicProfile(id, body);
-    return Utils.ResponseSuccess('success', res);
-  }
-
-  @Role(["admin", "asesor"])
-  @Patch(':id/expertise-profile/private')
-  async updateExpertisePrivateProfile(
-    @Param('id') id: string,
-    @Body() body: PrivateExpertiseProfileDto,
-  ) {
-    const res = await this.profileService.updateExpertiePrivateProfile(id, body);
+    const res = await this.profileService.updateExpertiseProfile(userId, body);
     return Utils.ResponseSuccess('success', res);
   }
 
