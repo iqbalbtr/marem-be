@@ -33,13 +33,15 @@ model users {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
-    user_tokens           user_tokens[]
-    assesor_profile       assesor_profile?
-    participant_profile   participant_profile?  @relation("ParticipantUser")
-    mentored_participants participant_profile[] @relation("ParticipantMentor")
-    courses               courses[]
-    coaching_sessions     coaching_session[]
-    coaching_presences    coaching_presence[]
+    user_tokens             user_tokens[]
+    assesor_profile         assesor_profile?
+    participant_profile     participant_profile?      @relation("ParticipantUser")
+    mentored_participants   participant_profile[]     @relation("ParticipantMentor")
+    courses                 courses[]
+    coaching_sessions       coaching_session[]
+    coaching_presences      coaching_presence[]
+    business_profile        business_profile?
+    course_item_submissions course_item_submissions[]
 }
 
 model assesor_profile {
@@ -123,6 +125,8 @@ model business_profile {
     average_product_price    Decimal      @db.Decimal(15, 2)
     monthly_product_capacity Int
 
+    user_id                String              @unique
+    user                   users               @relation(fields: [user_id], references: [id])
     participant_profile_id String              @unique
     participant_profile    participant_profile @relation(fields: [participant_profile_id], references: [id])
 

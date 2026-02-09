@@ -1,7 +1,8 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
     IsString, IsNumber, IsBoolean, IsEnum, IsArray,
-    ValidateNested, IsOptional, IsUUID, IsDateString, Min
+    ValidateNested, IsOptional, IsUUID, IsDateString, Min,
+    Max
 } from 'class-validator';
 import { ModuleCategory, QuizType, SubmissionFormat } from '../course.constant';
 
@@ -35,6 +36,7 @@ export class AssignmentDataDto extends BaseItemDataDto {
 
     @IsNumber()
     @Min(0)
+    @Max(100)
     max_score: number;
 
     @IsEnum(SubmissionFormat)
@@ -51,6 +53,14 @@ export class QuizDataDto extends BaseItemDataDto {
     time_limit_minutes: number;
 
     @IsNumber()
+    @Min(0)
+    @Transform(({ value, obj }) => {
+        const totalPoints = obj.questions?.reduce((acc, curr) => acc + curr.points, 0) || 0;
+        if (value > totalPoints) {
+            throw new Error('passing_score cannot be greater than total points of all questions');
+        }
+        return value;
+    })
     passing_score: number;
 
     @IsArray()

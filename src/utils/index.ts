@@ -29,6 +29,9 @@ export class Utils {
         }
     }
 
+    static getPercentage(part: number, total: number): number {
+        return (part === 0 || total === 0) ? 0 : Math.round((part / total) * 100);
+    }
 
     static dateConvert(val: number | Date | string) {
 

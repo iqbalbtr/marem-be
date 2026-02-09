@@ -3,7 +3,7 @@ import { CourseService } from './services/course.service';
 import { ModuleService } from './services/module.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { Utils } from '@utils/index';
-import { QueryCourseDto } from './dto/query-course.dtp';
+import { QueryCourseDto } from './dto/query-course.dto';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { AuthGuard } from '@guards/auth.guard';
 import { Role } from '@decorators/role.decorator';

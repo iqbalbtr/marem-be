@@ -18,7 +18,7 @@ export class CreateCourseDto {
     @IsEnum(course_type)
     course_type: course_type;
 
-    @ValidateIf((object) => object.course_type === course_type.mandotary)
+    @ValidateIf((object) => object.course_type === course_type.mandatory)
     @IsNotEmpty({ message: 'Regional wajib diisi jika tipe course adalah Mandatory' })
     @IsString()
     @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)

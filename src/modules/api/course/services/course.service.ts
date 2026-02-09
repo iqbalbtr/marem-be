@@ -2,7 +2,7 @@ import { PrismaService } from '@database/prisma.service';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from '../dto/create-course.dto';
 import { PaginationHelper } from 'src/helpers/pagination.helper';
-import { QueryCourseDto } from '../dto/query-course.dtp';
+import { QueryCourseDto } from '../dto/query-course.dto';
 
 @Injectable()
 export class CourseService {

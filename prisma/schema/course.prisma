@@ -15,6 +15,19 @@ enum submission_status {
   graded
 }
 
+model courses_participants {
+  id        String @id @default(uuid())
+  course_id String
+  user_id   String
+
+  enrolled_at DateTime  @default(now())
+  finished_at DateTime?
+
+  course courses @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@unique([course_id, user_id])
+}
+
 model courses {
   id          String   @id @default(uuid())
   title       String
@@ -35,14 +48,27 @@ model courses {
   is_published Boolean   @default(false)
   published_at DateTime?
 
-  modules           course_modules[]
+  modules              course_modules[]
+  courses_participants courses_participants[]
 
   @@map("courses")
 }
 
 enum course_type {
-  mandotary
+  mandatory
   elective
+}
+
+model course_module_completions {
+  id        String @id @default(uuid())
+  user_id   String
+  module_id String
+
+  marked_at DateTime @default(now())
+
+  module course_modules @relation(fields: [module_id], references: [id])
+
+  @@unique([user_id, module_id])
 }
 
 model course_modules {
@@ -58,7 +84,20 @@ model course_modules {
 
   course courses @relation(fields: [course_id], references: [id], onDelete: Cascade)
 
-  items course_module_items[]
+  items                     course_module_items[]
+  course_module_completions course_module_completions[]
+}
+
+model course_module_item_completions {
+  id      String @id @default(uuid())
+  user_id String
+  item_id String
+
+  marked_at DateTime @default(now())
+
+  item course_module_items @relation(fields: [item_id], references: [id])
+
+  @@unique([user_id, item_id])
 }
 
 model course_module_items {
@@ -78,25 +117,31 @@ model course_module_items {
 
   module course_modules @relation(fields: [module_id], references: [id], onDelete: Cascade)
 
-  //   submissions course_item_submissions[]
+  submissions                    course_item_submissions[]
+  course_module_item_completions course_module_item_completions[]
 }
 
-// model course_item_submissions {
-//   id        String   @id @default(uuid())
+model course_item_submissions {
+  id String @id @default(uuid())
 
-//   user_id   String   
-//   item_id   String
+  user_id String
+  item_id String
 
-//   score     Float?   
+  score Float?
 
-//   response_snapshot Json 
+  response_snapshot Json @db.JsonB
 
-//   status    submission_status @default(in_progress)
+  status submission_status @default(in_progress)
 
-//   submitted_at DateTime @default(now())
-//   updated_at   DateTime @updatedAt
+  feedback  String?
+  graded_at DateTime?
+  graded_by Json?     @db.JsonB
 
-//   item      course_module_items @relation(fields: [item_id], references: [id])
+  submitted_at DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
-//   @@unique([user_id, item_id])
-// }
+  user users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  item course_module_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, item_id])
+}

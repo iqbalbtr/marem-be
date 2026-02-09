@@ -146,8 +146,7 @@
                   "variable": [
                     {
                       "key": "userId",
-                      "value": "{{asesorId}}",
-                      "uuid": "1c4b9849-c9ff-47fd-a1a3-78edab970543"
+                      "value": "{{asesorId}}"
                     }
                   ]
                 }
@@ -751,6 +750,29 @@
         }
       ],
       "id": "715923c1-d1c7-4bfd-9fcb-017bdf92dd23"
+    },
+    {
+      "name": "coaching",
+      "item": [
+        {
+          "name": "New Request",
+          "id": "979bb6e5-89e5-4e31-80f9-8aa02c753d73",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
+        }
+      ],
+      "id": "bf11600c-23d5-4d08-a5fa-5f058c3f22f3"
+    },
+    {
+      "name": "learning",
+      "item": [],
+      "id": "de66b763-14f9-4a0f-9483-346244552cb9"
     }
   ],
   "auth": {
