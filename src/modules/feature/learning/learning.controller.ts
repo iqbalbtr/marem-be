@@ -5,7 +5,6 @@ import { UserToken } from '@models/token.model';
 import { Utils } from '@utils/index';
 import { Role } from '@decorators/role.decorator';
 import { LearningStatisticService } from './services/learning-statistic.service';
-import { CourseService } from '../course/services/course.service';
 
 @Role(['admin', 'participant'])
 @UseGuards(AuthGuard)

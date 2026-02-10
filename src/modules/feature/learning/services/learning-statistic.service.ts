@@ -2,7 +2,7 @@ import { PrismaService } from "@database/prisma.service";
 import { Injectable } from "@nestjs/common";
 import { Utils } from "@utils/index";
 import { module_category } from "@prisma";
-import { CourseAccessService } from "../features/course/services/course-access.service";
+import { LearningCourseAccessService } from "./learning-course-access.service";
 
 @Injectable()
 export class LearningStatisticService {
@@ -11,7 +11,7 @@ export class LearningStatisticService {
 
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly courseAccessService: CourseAccessService,
+        private readonly courseAccessService: LearningCourseAccessService,
     ) { }
 
     async getStatsForUser(userId: string) {
