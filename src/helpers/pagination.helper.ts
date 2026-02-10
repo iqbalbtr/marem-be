@@ -28,6 +28,13 @@ export class PaginationHelper {
     return (orderByQuery ?? {}) as NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['orderBy']>;
   }
 
+  static getIncludeQuery<T extends Prisma.ModelName>(
+    table: T,
+    includeQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['include'],
+  ): NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['include']> {
+    return (includeQuery ?? {}) as NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['include']>;
+  }
+
   static async createPaginationData<T extends Prisma.ModelName>({
     prismaService,
     page,

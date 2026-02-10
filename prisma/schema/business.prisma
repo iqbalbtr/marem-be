@@ -1,0 +1,42 @@
+enum product_type {
+    goods
+    services
+    both
+}
+
+enum business_type {
+    perorangan
+    cv
+    pt
+    koperasi
+}
+
+model business_profile {
+    id String @id @unique @default(uuid())
+
+    name        String @db.VarChar(100)
+    birth_year  Int
+    province    String
+    street      String
+    city        String
+    postal_code String
+
+    nib            String        @db.VarChar(50)
+    business_type  business_type
+    business_field String        @db.VarChar(100)
+
+    total_sku                Int
+    product_type             product_type
+    average_product_price    Decimal      @db.Decimal(15, 2)
+    monthly_product_capacity Int
+
+    user_id                String              @unique
+    user                   users               @relation(fields: [user_id], references: [id])
+    participant_profile_id String              @unique
+    participant_profile    participant_profile @relation(fields: [participant_profile_id], references: [id])
+
+    bussines_developments business_developments[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}

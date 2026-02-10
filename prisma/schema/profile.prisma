@@ -1,0 +1,48 @@
+model assesor_profile {
+    id String @id @unique @default(uuid())
+
+    nik            String  @db.VarChar(16)
+    position       String  @db.VarChar(100)
+    organization   String  @db.VarChar(100)
+    specialization String  @db.VarChar(100)
+    linked_in      String? @db.Text
+    portofolio     String? @db.Text
+    bio            String? @db.VarChar(300)
+    phone          String  @db.VarChar(15)
+    email          String  @db.VarChar(100)
+    account_number String  @db.VarChar(50)
+    account_name   String  @db.VarChar(100)
+
+    user_id String @unique
+    user    users  @relation(fields: [user_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}
+
+model participant_profile {
+    id String @id @unique @default(uuid())
+
+    clasification  classification
+    nik            String         @db.VarChar(16)
+    npwp           String         @db.VarChar(20)
+    last_education String         @db.VarChar(100)
+
+    start_year    Int
+    province      String
+    street        String
+    city          String
+    postal_code   String
+    source_joined String
+
+    mentor_id String?
+    mentor    users?  @relation("ParticipantMentor", fields: [mentor_id], references: [id], onDelete: SetNull)
+
+    user_id String @unique
+    user    users  @relation("ParticipantUser", fields: [user_id], references: [id])
+
+    business_profile business_profile?
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+}

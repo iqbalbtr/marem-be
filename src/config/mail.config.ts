@@ -4,10 +4,7 @@ export type MailConfig = {
     secure: boolean;
     auth: {
         user: string;
-        clientId?: string;
-        clientSecret?: string;
-        refreshToken?: string;
-        accessToken?: string;
+        password: string;
     }
 }
 
@@ -18,10 +15,7 @@ export default () => ({
         secure: process.env.MAILER_SECURE === 'true' || false,
         auth: {
             user: process.env.MAILER_AUTH_USER || '',
-            clientId: process.env.MAILER_CLIENT_ID || '',
-            clientSecret: process.env.MAILER_CLIENT_SECRET || '',
-            refreshToken: process.env.MAILER_REFRESH_TOKEN || '',
-            accessToken: process.env.MAILER_ACCESS_TOKEN || ''
+            password: process.env.MAILER_AUTH_PASSWORD || '',
         }
     } as MailConfig
 })

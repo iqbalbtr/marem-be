@@ -1,0 +1,48 @@
+model course_item_submissions {
+    id String @id @default(uuid())
+
+    user_id String
+    item_id String
+
+    score Float?
+
+    response_snapshot Json @db.JsonB
+
+    status submission_status @default(in_progress)
+
+    feedback  String?
+    graded_at DateTime?
+    graded_by Json?     @db.JsonB
+
+    submitted_at DateTime @default(now())
+    updated_at   DateTime @updatedAt
+
+    user users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    item course_module_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
+
+    @@unique([user_id, item_id])
+}
+
+model course_module_completions {
+    id        String @id @default(uuid())
+    user_id   String
+    module_id String
+
+    marked_at DateTime @default(now())
+
+    module course_modules @relation(fields: [module_id], references: [id])
+
+    @@unique([user_id, module_id])
+}
+
+model course_module_item_completions {
+    id      String @id @default(uuid())
+    user_id String
+    item_id String
+
+    marked_at DateTime @default(now())
+
+    item course_module_items @relation(fields: [item_id], references: [id])
+
+    @@unique([user_id, item_id])
+}

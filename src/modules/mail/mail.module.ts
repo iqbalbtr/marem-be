@@ -15,14 +15,12 @@ import { resolve } from 'path';
                 const mailConfig = configService.get<MailConfig>('mail');
                 return {
                     transport: {
-                        service: 'gmail',
+                        host: mailConfig?.host,
+                        port: mailConfig?.port,
+                        secure: mailConfig?.secure,
                         auth: {
-                            type: 'oauth2',
                             user: mailConfig?.auth.user,
-                            clientId: mailConfig?.auth.clientId,
-                            clientSecret: mailConfig?.auth.clientSecret,
-                            refreshToken: mailConfig?.auth.refreshToken,
-                            accessToken: mailConfig?.auth.accessToken
+                            pass: mailConfig?.auth.password
                         }
                     },
                     template: {
