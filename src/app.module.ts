@@ -3,10 +3,10 @@ import { DataBaseModule } from './database/database.module';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UploadModule } from './modules/upload/upload.module';
-import { ApiModule } from './modules/api/api.module';
 import configModule from '@config/config.module';
 import { LoggerMiddleware } from '@middlewares/logger.middleware';
 import { MailModule } from './modules/mail/mail.module';
+import { FeatureModule } from './modules/feature/feature.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { MailModule } from './modules/mail/mail.module';
     MailModule,
     AuthModule,
     UploadModule,
-    ApiModule,
+    FeatureModule
   ]
 })
 export class AppModule implements NestModule {
