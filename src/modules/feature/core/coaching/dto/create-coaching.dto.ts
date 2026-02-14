@@ -17,7 +17,7 @@ export class CreateCoachingDto {
 
     @IsOptional()
     @IsUUID()
-    mentor_id: string;
+    asesor_id: string;
 
     @IsUrl()
     meeting_link: string;

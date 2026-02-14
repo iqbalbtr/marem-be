@@ -1,4 +1,4 @@
-import { classification, gender } from "@prisma"
+import { classification, gender, stage } from "@prisma"
 import { Type } from "class-transformer"
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Length, Max, Min, ValidateNested } from "class-validator"
 
@@ -22,6 +22,12 @@ export class ParticipantProfileDto {
     @Length(2, 100)
     last_education: string
 
+    @IsEnum(stage)
+    stage: stage
+
+    @IsOptional()
+    @IsUUID("4")
+    asesor_id?: string
 }
 
 export class BussinessProfileDto {

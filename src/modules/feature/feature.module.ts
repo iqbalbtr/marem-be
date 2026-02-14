@@ -6,7 +6,6 @@ import { CoachingModule } from './core/coaching/coaching.module';
 import { LearningModule } from './learning/learning.module';
 import { TeachingModule } from './teaching/teaching.module';
 import { CertificateModule } from './core/certificate/certificate.module';
-import { ReportModule } from './core/report/report.module';
 import { SurveyModule } from './core/survey/survey.module';
 
 @Module({
@@ -18,7 +17,6 @@ import { SurveyModule } from './core/survey/survey.module';
         LearningModule,
         TeachingModule,
         CertificateModule,
-        ReportModule,
         SurveyModule
     ],
 })

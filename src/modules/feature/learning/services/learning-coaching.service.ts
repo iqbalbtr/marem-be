@@ -32,13 +32,14 @@ export class LearningCoachingService {
             OR: [
                 { classification: userInfo.participant_profile.clasification },
                 { regional: userInfo.participant_profile.province },
-            ]
+            ],
+            stage: userInfo.participant_profile.stage,
         });
 
         if (query.search) {
             qBuilder.OR = [
                 { title: { contains: query.search, mode: 'insensitive' } },
-                { mentor: { name: { contains: query.search, mode: 'insensitive' } } }
+                { asesor: { name: { contains: query.search, mode: 'insensitive' } } }
             ];
         }
 
@@ -52,7 +53,7 @@ export class LearningCoachingService {
                 created_at: 'desc'
             },
             includeQuery: {
-                mentor: {
+                asesor: {
                     select: {
                         id: true,
                         name: true,

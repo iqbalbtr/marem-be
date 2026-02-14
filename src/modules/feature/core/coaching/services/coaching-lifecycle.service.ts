@@ -15,7 +15,7 @@ export class CoachingLifecycleService {
         if (coaching.status !== 'scheduled') {
             throw new NotFoundException('Only scheduled coaching sessions can be started');
         }
-        if(!PermissionHelper.canManageResource(user, coaching.mentor_id!)) {
+        if(!PermissionHelper.canManageResource(user, coaching.asesor_id!)) {
             throw new NotFoundException('You do not have permission to start this coaching session');
         }
         await this.prismaService.coaching_session.update({
@@ -37,7 +37,7 @@ export class CoachingLifecycleService {
         if (coaching.status !== 'ongoing') {
             throw new NotFoundException('Only ongoing coaching sessions can be ended');
         }
-        if(!PermissionHelper.canManageResource(user, coaching.mentor_id!)) {
+        if(!PermissionHelper.canManageResource(user, coaching.asesor_id!)) {
             throw new NotFoundException('You do not have permission to end this coaching session');
         }
         return this.prismaService.coaching_session.update({

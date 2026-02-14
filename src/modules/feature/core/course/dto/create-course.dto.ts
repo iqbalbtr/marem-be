@@ -1,4 +1,4 @@
-import { audience_target, classification, course_type } from '@prisma';
+import { audience_target, classification, course_type, stage } from '@prisma';
 import { Transform } from 'class-transformer';
 import { IsString, IsNumber, IsBoolean, IsNotEmpty, Min, IsOptional, isUUID, IsUUID, IsEnum, ValidateIf } from 'class-validator';
 
@@ -13,7 +13,7 @@ export class CreateCourseDto {
     description: string;
 
     @IsUUID("4")
-    mentor_id: string;
+    asesor_id: string;
 
     @IsEnum(course_type)
     course_type: course_type;
@@ -33,4 +33,7 @@ export class CreateCourseDto {
     @IsNotEmpty()
     @IsBoolean()
     is_published: boolean;
+
+    @IsEnum(stage)
+    stage: stage
 }

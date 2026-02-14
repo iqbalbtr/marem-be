@@ -5,14 +5,16 @@ import { Utils } from '@utils/index';
 import { AuthGuard } from '@guards/auth.guard';
 import { Role } from '@decorators/role.decorator';
 import { BusinessProfileDto } from './dto/update-bussines.dto';
+import { CheckOwnership } from '@decorators/check-ownership.decorator';
 
 @UseGuards(AuthGuard)
+@Role(["participant", 'admin'])
+@CheckOwnership('userId', 'params', ['admin'])
 @Controller('/api/users/:userId/bussines')
 export class BussinesController {
 
   constructor(private readonly businesService: BusinessService) { }
 
-  @Role(["participant", 'admin'])
   @Patch('profile')
   async updateBusinessProfile(
     @Param('userId') userId: string,
@@ -22,7 +24,6 @@ export class BussinesController {
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Role(["participant", 'admin'])
   @Post('snapshots')
   async addNewBusinessSnapshot(
     @Param('userId') userId: string,
@@ -32,7 +33,6 @@ export class BussinesController {
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Role(["participant", 'admin'])
   @Get('summary') 
   async getBusinessSummary(
     @Param('userId') userId: string

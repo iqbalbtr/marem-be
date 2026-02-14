@@ -22,6 +22,10 @@ export class OwnershipGuard implements CanActivate {
       throw new ForbiddenException('User not authenticated');
     }
 
+    if (options.skipRoles && options.skipRoles.includes(user.role)) {
+      return true;
+    }
+
     let resourceId: string;
 
     switch (options.source) {

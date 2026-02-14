@@ -1,7 +1,7 @@
 import { PrismaService } from "@database/prisma.service";
 import { GradingResult, IGradingStrategy } from "../grading.interface";
 import { UserToken } from "@models/token.model";
-import { course_module_items, Prisma } from "@prisma";
+import { course_module_items, course_modules, Prisma } from "@prisma";
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { QuizGradingDto, QuizItemDto } from "../../dto/grading.dto";
 import { QuizData, QuizQuestion } from "src/modules/feature/core/course/course.constant";
@@ -15,7 +15,7 @@ export class QuizGradingStrategy implements IGradingStrategy {
 
     async execute(
         user: UserToken,
-        item: course_module_items,
+        item: course_module_items & {module: course_modules},
         submissionData: QuizGradingDto,
     ): Promise<GradingResult> {
 
@@ -52,7 +52,8 @@ export class QuizGradingStrategy implements IGradingStrategy {
                     status: 'submitted',
                     submitted_at: new Date(),
                     graded_at: new Date(),
-                    score: gradingResult.totalScore
+                    score: gradingResult.totalScore,
+                    course_id: item.module.course_id
                 },
                 update: {
                     response_snapshot: {

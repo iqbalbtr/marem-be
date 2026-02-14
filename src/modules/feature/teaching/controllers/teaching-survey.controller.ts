@@ -10,7 +10,7 @@ import { SurveySubmissionService } from '../../core/survey/services/survey-submi
 import { SubmitSurveyDto } from '../../core/survey/dto/submit-survey.dto';
 
 @UseGuards(AuthGuard)
-@Role(['admin', 'mentor', 'asesor'])
+@Role(['admin', 'asesor'])
 @Controller('/api/teaching/surveys')
 export class TeachingSurveyController {
 

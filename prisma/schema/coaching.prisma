@@ -20,8 +20,8 @@ model coaching_session {
 
     status session_status @default(scheduled)
 
-    mentor_id String?
-    mentor    users?  @relation(fields: [mentor_id], references: [id], onDelete: SetNull)
+    asesor_id String?
+    asesor    users?  @relation(fields: [asesor_id], references: [id], onDelete: SetNull)
 
     created_at        DateTime            @default(now())
     updated_at        DateTime            @updatedAt

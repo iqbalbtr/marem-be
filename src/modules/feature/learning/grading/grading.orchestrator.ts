@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { AssignmentGradingStrategy } from "./strategies/assignment-grading.strategy";
 import { QuizGradingStrategy } from "./strategies/quiz-grading.strategy";
-import { course_module_items, module_category } from "@prisma";
+import { course_module_items, course_modules, module_category } from "@prisma";
 import { UserToken } from "@models/token.model";
 import { IGradingStrategy } from "./grading.interface";
 import { AssignmentGradingDto, QuizGradingDto } from "../dto/grading.dto";
@@ -17,7 +17,7 @@ export class GradingOrchestrator {
     async grade(
         user: UserToken,
         category: module_category,
-        item: course_module_items,
+        item: course_module_items & { module: course_modules },
         dto: AssignmentGradingDto | QuizGradingDto,
     ) {
         let strategy: IGradingStrategy;

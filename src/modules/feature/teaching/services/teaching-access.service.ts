@@ -17,7 +17,7 @@ export class TeachingAccessService {
                 id: itemId,
                 module: {
                     course: {
-                        mentor_id: profile.user_id
+                        asesor_id: profile.user_id
                     }
                 }
             }
@@ -29,7 +29,7 @@ export class TeachingAccessService {
 
     public async getUserInfo(userId: string) {
         const user = await this.prismaService.users.findUnique({
-            where: { id: userId, role: {in: ['admin', 'asesor', 'mentor']} },
+            where: { id: userId, role: {in: ['admin', 'asesor']} },
             include: { assesor_profile: true }
         });
 

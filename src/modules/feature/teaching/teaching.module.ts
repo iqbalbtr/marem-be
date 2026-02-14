@@ -8,12 +8,16 @@ import { TeachingGradingService } from './services/teaching-grading.service';
 import { TeachingCoachingService } from './services/teaching-coaching.service';
 import { TeachingSurveyController } from './controllers/teaching-survey.controller';
 import { SurveyModule } from '../core/survey/survey.module';
+import { UserModule } from '../core/user/user.module';
+import { BussinesModule } from '../core/bussines/bussines.module';
 
 @Module({
   imports: [
     CoachingModule,
     CourseModule,
-    SurveyModule
+    SurveyModule,
+    UserModule,
+    BussinesModule
   ],
   controllers: [
     TeachingGradingController,

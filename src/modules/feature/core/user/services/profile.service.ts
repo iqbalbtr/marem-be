@@ -3,8 +3,6 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { BatchParticipantProfileDto } from '../dto/bussiness-profile.dto';
 import { StorageUtils } from '@utils/storage.util';
 import { UpdateProfileExpertiseDto } from '../dto/expertise-profile.dto';
-import { UserToken } from '@models/token.model';
-import { PermissionHelper } from 'src/helpers/permission.helper';
 
 @Injectable()
 export class ProfileService {
@@ -13,7 +11,7 @@ export class ProfileService {
     private readonly prismaService: PrismaService,
   ) { }
 
-  async updateBussinessProfile( userId: string, businessProfile: BatchParticipantProfileDto) {
+  async updateBussinessProfile(userId: string, businessProfile: BatchParticipantProfileDto) {
 
     const user = await this.prismaService.users.findUnique({
       where: {
@@ -57,6 +55,8 @@ export class ProfileService {
                 province: participat_bussiness.province,
                 source_joined: participat_bussiness.source_joined,
                 street: participat_bussiness.street,
+                stage: participant_profile.stage,
+                asesor_id: participant_profile.asesor_id,
               },
               update: {
                 start_year: participat_bussiness.start_year,
@@ -69,6 +69,8 @@ export class ProfileService {
                 province: participat_bussiness.province,
                 source_joined: participat_bussiness.source_joined,
                 street: participat_bussiness.street,
+                stage: participant_profile.stage,
+                asesor_id: participant_profile.asesor_id,
               }
             }
           }

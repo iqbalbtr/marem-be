@@ -17,7 +17,7 @@ export class CoachingService {
     async createSessionCoaching(data: CreateCoachingDto) {
         this.validateTime(data.start_time, data.end_time);
 
-        await this.validateMentor(data.mentor_id);
+        await this.validateMentor(data.asesor_id);
         
         const createdCoaching = await this.prismaService.coaching_session.create({
             data: data
@@ -38,13 +38,13 @@ export class CoachingService {
             throw new BadRequestException('Only scheduled coaching sessions can be updated');
         }
 
-        const canManage = PermissionHelper.canManageResource(user, exist.mentor_id!);
+        const canManage = PermissionHelper.canManageResource(user, exist.asesor_id!);
         if (!canManage) {
             throw new ForbiddenException('You do not have permission to update this coaching session');
         }
 
-        if (data.mentor_id && data.mentor_id !== exist.mentor_id) {
-            await this.validateMentor(data.mentor_id);
+        if (data.asesor_id && data.asesor_id !== exist.asesor_id) {
+            await this.validateMentor(data.asesor_id);
         }
 
         if (data.start_time || data.end_time) {
@@ -68,7 +68,7 @@ export class CoachingService {
             throw new NotFoundException('Coaching session not found');
         }
 
-        const canManage = PermissionHelper.canManageResource(user, exist.mentor_id!);
+        const canManage = PermissionHelper.canManageResource(user, exist.asesor_id!);
         if (!canManage) {
             throw new ForbiddenException('You do not have permission to delete this coaching session');
         }
@@ -82,7 +82,7 @@ export class CoachingService {
         const coaching = await this.prismaService.coaching_session.findUnique({
             where: { id: coachingId },
             include: {
-                mentor: {
+                asesor: {
                     select: {
                         id: true,
                         name: true,
@@ -107,7 +107,7 @@ export class CoachingService {
         if (query.search) {
             qBuilder.OR = [
                 { title: { contains: query.search, mode: 'insensitive' } },
-                { mentor: { name: { contains: query.search, mode: 'insensitive' } } }
+                { asesor: { name: { contains: query.search, mode: 'insensitive' } } }
             ];
         }
 
@@ -129,7 +129,7 @@ export class CoachingService {
                 created_at: 'desc'
             },
             includeQuery: {
-                mentor: {
+                asesor: {
                     select: {
                         id: true,
                         name: true,
@@ -145,13 +145,13 @@ export class CoachingService {
             where: {
                 id: mentorId,
                 role: {
-                    in: ['mentor', 'admin'] 
+                    in: ['asesor', 'admin'] 
                 }
             }
         });
 
         if (count === 0) {
-            throw new NotFoundException('Mentor not found or user is not a mentor');
+            throw new NotFoundException('Mentor not found or user is not a asesor');
         }
     }
 

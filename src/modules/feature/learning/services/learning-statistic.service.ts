@@ -132,7 +132,7 @@ export class LearningStatisticService {
                 },
                 orderBy: { actual_start_time: 'asc' },
                 include: {
-                    mentor: {
+                    asesor: {
                         select: { id: true, name: true, profile: true, email: true }
                     }
                 }

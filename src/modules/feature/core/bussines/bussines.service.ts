@@ -64,8 +64,8 @@ export class BusinessService {
         });
     }
 
-    async getBusinessDevelopments(userId: string) {
-        const businessProfile = await this.getBusinessProfileByUserId(userId);
+    async getBusinessDevelopments(userId: string, asesor_id?: string) {
+        const businessProfile = await this.getBusinessProfileByUserId(userId, asesor_id);
 
         const developments = await this.prismaService.business_developments.findMany({
             where: { business_id: businessProfile.id },
@@ -147,9 +147,9 @@ export class BusinessService {
         };
     }
 
-    private async getBusinessProfileByUserId(userId: string) {
+    private async getBusinessProfileByUserId(userId: string, asesor_id?: string) {
         const user = await this.prismaService.users.findFirst({
-            where: { id: userId },
+            where: { id: userId, participant_profile: { asesor_id } },
             include: {
                 participant_profile: {
                     include: { business_profile: true },

@@ -17,8 +17,10 @@ model course_item_submissions {
     submitted_at DateTime @default(now())
     updated_at   DateTime @updatedAt
 
-    user users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
-    item course_module_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
+    course_id String
+    course    courses             @relation(fields: [course_id], references: [id], onDelete: Cascade)
+    user      users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    item      course_module_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
 
     @@unique([user_id, item_id])
 }

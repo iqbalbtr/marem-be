@@ -9,7 +9,7 @@ import { CoachingPresenceService } from '../../core/coaching/services/coaching-p
 import { MarkPresenceDto } from '../../core/coaching/dto/mark-presence.dto';
 import { TeachingCoachingService } from '../services/teaching-coaching.service';
 
-@Role(['admin', 'mentor', 'asesor'])
+@Role(['admin', 'asesor'])
 @Controller('/api/teaching/coachings')
 export class TeachingCoachingController {
 

@@ -35,9 +35,11 @@ model courses {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  mentor_id String?
+  asesor_id String?
 
-  mentor users? @relation(fields: [mentor_id], references: [id], onDelete: SetNull)
+  asesor users? @relation(fields: [asesor_id], references: [id], onDelete: SetNull)
+
+  stage stage
 
   classification  String?
   audience_target audience_target
@@ -48,8 +50,9 @@ model courses {
   is_published Boolean   @default(false)
   published_at DateTime?
 
-  modules              course_modules[]
-  courses_participants courses_participants[]
+  modules               course_modules[]
+  courses_participants  courses_participants[]
+  course_item_submissions course_item_submissions[]
 
   @@map("courses")
 }

@@ -1,7 +1,7 @@
 import { PrismaService } from "@database/prisma.service";
 import { GradingResult, IGradingStrategy } from "../grading.interface";
 import { UserToken } from "@models/token.model";
-import { course_module_items } from "@prisma";
+import { course_module_items, course_modules } from "@prisma";
 import { Injectable } from "@nestjs/common";
 import { AssignmentGradingDto } from "../../dto/grading.dto";
 import { AssignmentDataDto } from "src/modules/feature/core/course/dto/create-module.dto";
@@ -15,16 +15,16 @@ export class AssignmentGradingStrategy implements IGradingStrategy {
 
     async execute(
         user: UserToken,
-        item: course_module_items,
+        item: course_module_items & { module: course_modules },
         submissionData: AssignmentGradingDto,
     ): Promise<GradingResult> {
 
         const itemData = item.data as unknown as AssignmentDataDto
 
-        if(new Date(itemData.due_date) < new Date()){
+        if (new Date(itemData.due_date) < new Date()) {
             throw new Error(`The assignment with ID ${item.id} is past its due date.`);
         }
-        
+
 
         const result = await this.prismaService.$transaction(async (tx) => {
             const grade = await tx.course_item_submissions.upsert({
@@ -44,7 +44,8 @@ export class AssignmentGradingStrategy implements IGradingStrategy {
                     },
                     status: 'submitted',
                     submitted_at: new Date(),
-                    score: null
+                    score: null,
+                    course_id: item.module.course_id
                 },
                 update: {
                     response_snapshot: {
@@ -58,7 +59,7 @@ export class AssignmentGradingStrategy implements IGradingStrategy {
             });
 
             await tx.course_module_item_completions.upsert({
-                where:{
+                where: {
                     user_id_item_id: {
                         user_id: user.user_id,
                         item_id: item.id

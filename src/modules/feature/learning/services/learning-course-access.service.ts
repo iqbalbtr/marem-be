@@ -17,7 +17,8 @@ export class LearningCourseAccessService {
             OR: [
                 { course_type: course_type.elective, classification: profile?.clasification },
                 { course_type: course_type.mandatory, regional: profile?.province }
-            ]
+            ],
+            stage: profile?.stage
         };
     }
 
@@ -26,7 +27,8 @@ export class LearningCourseAccessService {
             OR: [
                 { regional: profile?.province },
                 { classification: profile?.clasification }
-            ]
+            ],
+            stage: profile?.stage
         }
     }
 
@@ -43,7 +45,8 @@ export class LearningCourseAccessService {
                 course_module_item_completions: {
                     where: { user_id: profile.user_id },
                     take: 1
-                }
+                },
+                module: true
             }
         });
 

@@ -11,6 +11,7 @@ import { Role } from '@decorators/role.decorator';
 import { User } from '@decorators/auth.decorator';
 import { UserToken } from '@models/token.model';
 import { CheckOwnership } from '@decorators/check-ownership.decorator';
+import { UserReportService } from './services/user-report.service';
 
 @UseGuards(AuthGuard)
 @Controller('/api/users')
@@ -18,6 +19,7 @@ export class UserController {
   constructor(
     private readonly profileService: ProfileService,
     private readonly userService: UserService,
+    private readonly userReportService: UserReportService,
   ) { }
 
   @Role("admin")
@@ -68,7 +70,7 @@ export class UserController {
   }
 
   @Role(["admin", "participant"])
-  @CheckOwnership('userId', 'params')
+  @CheckOwnership('userId', 'params', ['admin'])
   @Patch(':userId/business-profile')
   async updateBusinessProfile(
     @Param('userId') userId: string,
@@ -79,7 +81,7 @@ export class UserController {
   }
 
   @Role(["admin", "asesor"])
-  @CheckOwnership('userId', 'params')
+  @CheckOwnership('userId', 'params', ['admin'])
   @Patch(':userId/expertise-profile')
   async updateExpertiseProfile(
     @Param('userId') userId: string,
@@ -89,4 +91,13 @@ export class UserController {
     return Utils.ResponseSuccess('success', res);
   }
 
+  @Role(["admin", "participant", "asesor"])
+  @CheckOwnership('userId', 'params', ['admin', 'asesor'])
+  @Get(':userId/report')
+  async getUserReport(
+    @Param('userId') userId: string,
+  ) {
+    const userInfo = await this.userReportService.getUserReport(userId);
+    return Utils.ResponseSuccess('success', userInfo);
+  }
 }

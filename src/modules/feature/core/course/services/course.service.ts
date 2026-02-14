@@ -50,7 +50,7 @@ export class CourseService {
                 created_at: true,
                 updated_at: true,
                 is_published: true,
-                mentor: {
+                asesor: {
                     select: { id: true, name: true, email: true, profile: true }
                 },
                 ...(options?.selectQuery || {})
@@ -84,7 +84,7 @@ export class CourseService {
 
     async createCourse(data: CreateCourseDto) {
 
-        await this.validateMentors(data.mentor_id);
+        await this.validateMentors(data.asesor_id);
 
         const createdCourse = await this.prismaService.courses.create({
             data
@@ -102,7 +102,7 @@ export class CourseService {
             throw new BadRequestException('course not found.');
         }
 
-        await this.validateMentors(data.mentor_id);
+        await this.validateMentors(data.asesor_id);
 
         return this.prismaService.courses.update({
             where: { id: courseId },
@@ -129,7 +129,7 @@ export class CourseService {
             where: {
                 id: mentorId,
                 role: {
-                    in: ['mentor', 'admin', 'asesor']
+                    in: ['admin', 'asesor']
                 }
             }
         });

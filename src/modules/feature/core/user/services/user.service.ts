@@ -1,13 +1,13 @@
 import { PrismaService } from '@database/prisma.service';
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserQueryDto } from '../dto/user-query.dto';
-import { Prisma } from '@prisma'; // Pastikan import dari client
 import { PaginationHelper } from 'src/helpers/pagination.helper';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { MailService } from 'src/modules/mail/mail.service';
 import { PermissionHelper } from 'src/helpers/permission.helper';
 import { UserToken } from '@models/token.model';
+import { Prisma } from '@prisma';
 
 @Injectable()
 export class UserService {
@@ -34,6 +34,12 @@ export class UserService {
       queryBuilder.gender = query.gender
     }
 
+    if(query.asesor_id){
+      queryBuilder.participant_profile = {
+        asesor_id: query.asesor_id
+      }
+    }
+
     return PaginationHelper.createPaginationData({
       page: query.page,
       per_page: query.limit,
@@ -51,9 +57,10 @@ export class UserService {
     })
   }
 
-  async findOne(id: string) {
-    const res = await this.prismaService.users.findUnique({
+  async findOne(id: string, whereClause: Prisma.usersWhereInput = {}) {
+    const res = await this.prismaService.users.findFirst({
       where: {
+        ...whereClause,
         id: id
       },
       select: {

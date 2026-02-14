@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional } from "class-validator";
+import { IsEnum, IsOptional, IsUUID } from "class-validator";
 import { gender, user_role } from "prisma/generated/prisma/browser";
 import { PaginationDto } from "src/common/dto/pagination-dto";
 
@@ -11,4 +11,8 @@ export class UserQueryDto extends PaginationDto {
     @IsOptional()
     @IsEnum(gender)
     gender?: gender;
+
+    @IsOptional()
+    @IsUUID("4")
+    asesor_id?: string;
 }

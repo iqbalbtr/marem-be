@@ -2,8 +2,6 @@ enum user_role {
     admin
     participant
     asesor
-    mentor
-    fasilitator
 }
 
 enum gender {
@@ -36,7 +34,7 @@ model users {
     user_tokens             user_tokens[]
     assesor_profile         assesor_profile?
     participant_profile     participant_profile?      @relation("ParticipantUser")
-    mentored_participants   participant_profile[]     @relation("ParticipantMentor")
+    asesor_participants     participant_profile[]     @relation("ParticipantAsesor")
     courses                 courses[]
     coaching_sessions       coaching_session[]
     coaching_presences      coaching_presence[]

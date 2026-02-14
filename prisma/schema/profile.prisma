@@ -28,6 +28,8 @@ model participant_profile {
     npwp           String         @db.VarChar(20)
     last_education String         @db.VarChar(100)
 
+    stage         stage
+
     start_year    Int
     province      String
     street        String
@@ -35,8 +37,8 @@ model participant_profile {
     postal_code   String
     source_joined String
 
-    mentor_id String?
-    mentor    users?  @relation("ParticipantMentor", fields: [mentor_id], references: [id], onDelete: SetNull)
+    asesor_id String?
+    asesor    users?  @relation("ParticipantAsesor", fields: [asesor_id], references: [id], onDelete: SetNull)
 
     user_id String @unique
     user    users  @relation("ParticipantUser", fields: [user_id], references: [id])
