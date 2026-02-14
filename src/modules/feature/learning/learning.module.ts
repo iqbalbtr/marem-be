@@ -12,12 +12,15 @@ import { GradingOrchestrator } from './grading/grading.orchestrator';
 import { AssignmentGradingStrategy } from './grading/strategies/assignment-grading.strategy';
 import { QuizGradingStrategy } from './grading/strategies/quiz-grading.strategy';
 import { CoachingModule } from '../core/coaching/coaching.module';
+import { SurveyModule } from '../core/survey/survey.module';
+import { LearningSurveyController } from './controllers/learning-survey.controller';
 
 @Module({
   controllers: [
     LearningController,
     LearningCoachingController,
-    LearningGradingController
+    LearningGradingController,
+    LearningSurveyController
   ],
   providers: [
     LearningStatisticService,
@@ -31,10 +34,11 @@ import { CoachingModule } from '../core/coaching/coaching.module';
     
     GradingOrchestrator,
     AssignmentGradingStrategy,
-    QuizGradingStrategy
+    QuizGradingStrategy,
   ],
   imports: [
-    CoachingModule
+    CoachingModule,
+    SurveyModule
   ],
 })
 export class LearningModule {}

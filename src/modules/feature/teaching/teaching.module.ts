@@ -6,23 +6,25 @@ import { TeachingGradingController } from './controllers/teaching-grading.contro
 import { TeachingCourseController } from './controllers/teaching-course.controller';
 import { TeachingGradingService } from './services/teaching-grading.service';
 import { TeachingCoachingService } from './services/teaching-coaching.service';
-import { TeachingCourseService } from './services/teaching-course.service';
+import { TeachingSurveyController } from './controllers/teaching-survey.controller';
+import { SurveyModule } from '../core/survey/survey.module';
 
 @Module({
   imports: [
     CoachingModule,
-    CourseModule
+    CourseModule,
+    SurveyModule
   ],
   controllers: [
     TeachingGradingController,
     TeachingCourseController,
-    TeachingCourseController
+    TeachingCourseController,
+    TeachingSurveyController
   ],
   providers: [
     TeachingAccessService,
     TeachingGradingService,
     TeachingCoachingService,
-    TeachingCourseService
   ],
 })
 export class TeachingModule { }

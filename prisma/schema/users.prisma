@@ -42,8 +42,9 @@ model users {
     coaching_presences      coaching_presence[]
     business_profile        business_profile?
     course_item_submissions course_item_submissions[]
+    survey_responses        survey_responses[]
+    survey_reponse_item     survey_reponse_item[]
 }
-
 
 enum business_phase {
     onboarding

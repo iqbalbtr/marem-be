@@ -7,6 +7,7 @@ import { PaginationHelper } from 'src/helpers/pagination.helper';
 
 @Injectable()
 export class LearningCoachingService {
+    
     constructor(
         private readonly prismaService: PrismaService,
     ) { }

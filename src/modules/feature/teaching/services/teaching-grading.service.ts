@@ -6,6 +6,7 @@ import { PaginationDto } from 'src/common/dto/pagination-dto';
 import { PaginationHelper } from 'src/helpers/pagination.helper';
 import { GradeMentorDto } from '../dto/grade-mentor.dto';
 import { QueryGradeDto } from '../dto/query-grade.dto';
+import { Prisma } from '@prisma';
 
 @Injectable()
 export class TeachingGradingService {
@@ -14,6 +15,57 @@ export class TeachingGradingService {
         private readonly prismaService: PrismaService,
         private readonly teachingAccessService: TeachingAccessService
     ) { }
+
+    async getSubmisisonStatistic(user: UserToken) {
+
+        const baseQuery: Prisma.course_module_itemsWhereInput = {
+            module: {
+                course: {
+                    mentor_id: user.user_id
+                }
+            }
+        }
+
+        const [totalSubmissions, pendingSubmissions, gradedSubmissions] = await Promise.all([
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    item: baseQuery
+                }
+            }),
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    item: baseQuery,
+                    status: 'submitted'
+                }
+            }),
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    item: baseQuery,
+                    status: 'graded'
+                }
+            })
+        ])
+
+        const averageScoreAgg = await this.prismaService.course_item_submissions.aggregate({
+            where: {
+                item: baseQuery,
+                status: 'graded'
+            },
+            _avg: {
+                score: true
+            }
+        });
+
+        return {
+            submission_total: {
+                total: totalSubmissions,
+                pending: pendingSubmissions,
+                graded: gradedSubmissions
+            },
+            average_score: averageScoreAgg._avg.score || 0
+        }
+
+    }
 
     async gradeByMentor(
         submissionId: string,
@@ -69,7 +121,7 @@ export class TeachingGradingService {
             qBuilder.status = query.status;
         }
 
-        if(query.search){
+        if (query.search) {
             qBuilder.AND = [
                 {
                     OR: [

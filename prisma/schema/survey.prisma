@@ -1,0 +1,61 @@
+model surveys {
+    id                  String             @id @default(uuid())
+    title               String
+    description         String?
+    status              survey_status      @default(draft)
+    can_update_response Boolean            @default(false)
+    target_role         user_role
+    created_at          DateTime           @default(now())
+    updated_at          DateTime           @updatedAt
+    survey_items        survey_items[]
+    survey_responses    survey_responses[]
+}
+
+enum survey_status {
+    draft
+    published
+    archived
+    closed
+}
+
+enum survey_category {
+    answered
+    paragraph
+    options
+    checkboxes
+    rating
+    date
+}
+
+model survey_items {
+    id                  String                @id @default(uuid())
+    survey_id           String
+    category            survey_category
+    data                Json                  @db.JsonB
+    survey              surveys               @relation(fields: [survey_id], references: [id], onDelete: Cascade)
+    survey_reponse_item survey_reponse_item[]
+}
+
+model survey_responses {
+    id                  String                @id @default(uuid())
+    survey_id           String
+    user_id             String
+    created_at          DateTime              @default(now())
+    updated_at          DateTime              @updatedAt
+    survey              surveys               @relation(fields: [survey_id], references: [id], onDelete: Cascade)
+    user                users                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    survey_reponse_item survey_reponse_item[]
+}
+
+model survey_reponse_item {
+    id                 String           @id @default(uuid())
+    survey_response_id String
+    survey_item_id     String
+    user_id            String
+    answer             Json             @db.JsonB
+    survey_response    survey_responses @relation(fields: [survey_response_id], references: [id], onDelete: Cascade)
+    survey_item        survey_items     @relation(fields: [survey_item_id], references: [id], onDelete: Cascade)
+    user               users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+    @@unique([survey_response_id, survey_item_id, user_id])
+}

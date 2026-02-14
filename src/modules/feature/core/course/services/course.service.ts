@@ -3,6 +3,14 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateCourseDto } from '../dto/create-course.dto';
 import { PaginationHelper } from 'src/helpers/pagination.helper';
 import { QueryCourseDto } from '../dto/query-course.dto';
+import { UserToken } from '@models/token.model';
+import { courses, Prisma } from '@prisma';
+
+type OptionListCourses = {
+    whereClause: Prisma.coursesWhereInput,
+    selectQuery?: Prisma.coursesSelect | null,
+    transformData?: (data: Prisma.TypeMap['model']['courses']['operations']['findMany']['result']) => any
+}
 
 @Injectable()
 export class CourseService {
@@ -11,9 +19,9 @@ export class CourseService {
         private readonly prismaService: PrismaService,
     ) { }
 
-    async getAllCourses(query: QueryCourseDto) {
+    async getAllCourses(query: QueryCourseDto, options?: OptionListCourses) {
 
-        let qBuilder = PaginationHelper.getWhereQuery('courses')
+        let qBuilder = PaginationHelper.getWhereQuery('courses', options?.whereClause);
 
         if (query.classification) {
             qBuilder.classification = query.classification;
@@ -31,8 +39,47 @@ export class CourseService {
             orderByQuery: {
                 created_at: 'desc'
             },
-            whereQuery: qBuilder
+            whereQuery: qBuilder,
+            selectQuery: {
+                id: true,
+                title: true,
+                description: true,
+                course_type: true,
+                classification: true,
+                regional: true,
+                created_at: true,
+                updated_at: true,
+                is_published: true,
+                mentor: {
+                    select: { id: true, name: true, email: true, profile: true }
+                },
+                ...(options?.selectQuery || {})
+            },
+            transformData: data => options?.transformData ? options.transformData(data as any) : data
         })
+    }
+
+    async getCourseDetail(courseId: string, whereClause: Prisma.coursesWhereInput = {}) {
+
+        const course = await this.prismaService.courses.findUnique({
+            where: {
+                ...whereClause,
+                id: courseId
+            },
+            include: {
+                modules: {
+                    include: {
+                        items: true
+                    }
+                }
+            }
+        })
+
+        if (!course) {
+            throw new NotFoundException('Course not found');
+        }
+
+        return course
     }
 
     async createCourse(data: CreateCourseDto) {

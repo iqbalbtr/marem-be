@@ -7,6 +7,7 @@ import { QueryCourseDto } from '../dto/query-course.dto';
 import { LearningCourseAccessService } from './learning-course-access.service';
 import { LearningCourseProgressService } from './learning-course-progress.service';
 import { ModuleCategory, QuizData } from '../../core/course/course.constant';
+import { CourseService } from '../../core/course/services/course.service';
 @Injectable()
 export class LearningCourseService {
 
@@ -14,6 +15,7 @@ export class LearningCourseService {
         private readonly prismaService: PrismaService,
         private readonly courseAccessService: LearningCourseAccessService,
         private readonly courseProgressService: LearningCourseProgressService,
+        private readonly courseService: CourseService,
     ) { }
 
     async getCourses(user: UserToken, query: QueryCourseDto) {
@@ -46,7 +48,7 @@ export class LearningCourseService {
                 {
                     OR: [
                         { title: { contains: query.search, mode: 'insensitive' } },
-                        {description: { contains: query.search, mode: 'insensitive' } }
+                        { description: { contains: query.search, mode: 'insensitive' } }
                     ]
                 },
                 searchAccess
@@ -55,40 +57,20 @@ export class LearningCourseService {
             qBuilder.AND = [this.courseAccessService.getQueryCourseAccess(userInfo.participant_profile!)];
         }
 
-        const learnings = await PaginationHelper.createPaginationData({
-            page: query.page,
-            per_page: query.limit,
-            prismaService: this.prismaService,
-            table: 'courses',
-            whereQuery: qBuilder,
+        return await this.courseService.getAllCourses(query, {
+            whereClause: qBuilder,
             selectQuery: {
-                id: true,
-                title: true,
-                description: true,
-                course_type: true,
-                classification: true,
-                regional: true,
-                created_at: true,
-                updated_at: true,
-                is_published: true,
                 courses_participants: {
                     where: { user_id: user.user_id },
                     select: { enrolled_at: true, finished_at: true },
                     take: 1
                 },
-                mentor: {
-                    select: { id: true, name: true, email: true, profile: true }
-                }
-            }
-        });
-
-        return {
-            ...learnings,
-            data: learnings.data.map(({ courses_participants, ...learning }) => ({
+            },
+            transformData: (data) => data.map(({ courses_participants, ...learning }) => ({
                 ...learning,
                 is_finished: !!courses_participants?.[0]?.finished_at,
             }))
-        };
+        });
     }
 
     async getCourseModule(user: UserToken, courseId: string) {

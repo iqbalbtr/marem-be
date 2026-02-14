@@ -9,10 +9,19 @@ import { GradeMentorDto } from '../dto/grade-mentor.dto';
 
 @Role(['admin', 'asesor'])
 @Controller('/api/teaching/submissions')
-
 export class TeachingGradingController {
 
-  constructor(private readonly gradingService: TeachingGradingService) { }
+  constructor(
+    private readonly gradingService: TeachingGradingService
+  ) { }
+
+  @Get('/statistics')
+  async getStatistics(
+    @User() user: UserToken,
+  ) {
+    const res = await this.gradingService.getSubmisisonStatistic(user);
+    return Utils.ResponseSuccess('success', res);
+  }
 
   @Get()
   async getSubmissions(

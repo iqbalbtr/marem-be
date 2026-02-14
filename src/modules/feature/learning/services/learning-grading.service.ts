@@ -16,6 +16,47 @@ export class LearningGradingService {
         private readonly prismaService: PrismaService,
     ) { }
 
+    async getStaticaticsForCourse(token: UserToken) {
+        const [totalSubmissions, pendingSubmissions, submitedSubmissions] = await Promise.all([
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    user_id: token.user_id
+                }
+            }),
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    user_id: token.user_id,
+                    status: 'submitted'
+                }
+            }),
+            this.prismaService.course_item_submissions.count({
+                where: {
+                    user_id: token.user_id,
+                    status: 'graded'
+                }
+            })
+        ])
+
+        const averageScoreAgg = await this.prismaService.course_item_submissions.aggregate({
+            where: {
+                user_id: token.user_id,
+                status: 'graded'
+            },
+            _avg: {
+                score: true
+            }
+        });
+
+        return {
+            submission_total: {
+                total: totalSubmissions,
+                pending: pendingSubmissions,
+                graded: submitedSubmissions
+            },
+            average_score: averageScoreAgg._avg.score || 0
+        }
+    }
+
     async submitByStudent(
         itemId: string,
         user: UserToken,

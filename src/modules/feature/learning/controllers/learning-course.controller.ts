@@ -14,7 +14,7 @@ import { LearningCourseService } from '../services/learning-course.service';
 export class LearningCourseController {
 
   constructor(
-    private readonly courseService: LearningCourseService,
+    private readonly learningCourseService: LearningCourseService,
   ) { }
 
   @Get()
@@ -22,7 +22,7 @@ export class LearningCourseController {
     @User() user: UserToken,
     @Query() query: QueryCourseDto
   ) {
-    const res = await this.courseService.getCourses(user, query);
+    const res = await this.learningCourseService.getCourses(user, query);
     return Utils.ResponseSuccess('success', res);
   }
 
@@ -31,7 +31,7 @@ export class LearningCourseController {
     @User() user: UserToken,
     @Param('learningId') learningId: string
   ) {
-    const res = await this.courseService.getCourseModule(user, learningId);
+    const res = await this.learningCourseService.getCourseModule(user, learningId);
     return Utils.ResponseSuccess('success', res);
   }
 
@@ -40,7 +40,7 @@ export class LearningCourseController {
     @User() user: UserToken,
     @Param('moduleId') moduleId: string,
   ) {
-    const res = await this.courseService.getCourseModuleItems(user, moduleId);
+    const res = await this.learningCourseService.getCourseModuleItems(user, moduleId);
     return Utils.ResponseSuccess('success', res);
   }
 
@@ -49,7 +49,7 @@ export class LearningCourseController {
     @User() user: UserToken,
     @Param('itemId') itemId: string,
   ) {
-    const res = await this.courseService.getMaterialContent(user, itemId);
+    const res = await this.learningCourseService.getMaterialContent(user, itemId);
     return Utils.ResponseSuccess('success', res);
   }
 
@@ -59,7 +59,7 @@ export class LearningCourseController {
     @Param('learningId') learningId: string,
     @Param('itemId') itemId: string,
   ) {
-    const res = await this.courseService.markMaterialAsCompleted(user.user_id, learningId, itemId);
+    const res = await this.learningCourseService.markMaterialAsCompleted(user.user_id, learningId, itemId);
     return Utils.ResponseSuccess('Material marked as completed', res);
   }
 }

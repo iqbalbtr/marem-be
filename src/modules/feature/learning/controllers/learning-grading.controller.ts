@@ -14,6 +14,14 @@ export class LearningGradingController {
         private readonly gradingService: LearningGradingService,
     ) { }
 
+    @Get('/statistics')
+    async getStatistics(
+        @User() user: UserToken,
+    ) {
+        const res = await this.gradingService.getStaticaticsForCourse(user);
+        return Utils.ResponseSuccess('success', res);
+    }
+
     @Post('/materials/:itemId/submit')
     async submitAssignment(
         @Param('itemId') itemId: string,

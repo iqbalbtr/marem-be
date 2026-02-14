@@ -3,16 +3,16 @@ import { User } from '@decorators/auth.decorator';
 import { UserToken } from '@models/token.model';
 import { Utils } from '@utils/index';
 import { PaginationDto } from 'src/common/dto/pagination-dto';
-import { CreateCourseDto } from '../../core/course/dto/create-course.dto';
-import { TeachingCourseService } from '../services/teaching-course.service';
 import { CourseService } from '../../core/course/services/course.service';
+import { ModuleService } from '../../core/course/services/module.service';
+import { CreateModuleDto } from '../../core/course/dto/create-module.dto';
 
 @Controller('/api/teaching/courses')
 export class TeachingCourseController {
 
   constructor(
-    private readonly teachingCourseService: TeachingCourseService,
-    private readonly CourseService: CourseService,
+    private readonly courseService: CourseService,
+    private readonly courseModuleService: ModuleService,
   ) { }
 
   @Get()
@@ -20,46 +20,31 @@ export class TeachingCourseController {
     @User() user: UserToken,
     @Query() query: PaginationDto
   ) {
-    const res = await this.teachingCourseService.getCourses(user, query);
+    const res = await this.courseService.getAllCourses(query, {
+      whereClause: {
+        mentor_id: user.user_id
+      }
+    });
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Get(':courseId/modules')
-  async getLearningModules(
+  @Get(':courseId')
+  async getLearningDetail(
     @User() user: UserToken,
     @Param('courseId') courseId: string
   ) {
-    const res = await this.teachingCourseService.getCourseModule(user, courseId);
+    const res = await this.courseService.getCourseDetail(courseId, {
+      mentor_id: user.user_id
+    });
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Get(':courseId/modules/:moduleId/materials')
-  async getMaterialItems(
-    @User() user: UserToken,
-    @Param('moduleId') moduleId: string,
-    @Param('courseId') courseId: string
-  ) {
-    const res = await this.teachingCourseService.getCourseModuleItems(user, courseId, moduleId);
-    return Utils.ResponseSuccess('success', res);
-  }
-
-  @Get(':courseId/modules/:moduleId/materials/:itemId')
-  async getMaterialContent(
-    @User() user: UserToken,
-    @Param('itemId') itemId: string,
-    @Param('courseId') courseId: string
-  ) {
-    const res = await this.teachingCourseService.getMaterialContent(user, courseId, itemId);
-    return Utils.ResponseSuccess('success', res);
-  }
-
-
-  @Patch(":courseId")
+  @Patch(":courseId/modules")
   async updateCourse(
-    @Body() body: CreateCourseDto,
+    @Body() body: CreateModuleDto,
     @Param("courseId") courseId: string,
   ) {
-    const res = await this.CourseService.updateCourse(courseId, body);
+    const res = await this.courseModuleService.createModule(courseId, body);
     return Utils.ResponseSuccess('success', res);
   }
 

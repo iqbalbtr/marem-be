@@ -1,7 +1,10 @@
 import { Prisma, PrismaClient } from "@prisma";
+
 type UncapitalizeModel<T extends string> = Uncapitalize<T>;
 
-export type PaginationProps<T extends Prisma.ModelName> = {
+type ModelResult<T extends Prisma.ModelName> = Prisma.TypeMap['model'][T]['operations']['findMany']['result'];
+
+export type PaginationProps<T extends Prisma.ModelName, R = ModelResult<T>> = {
   prismaService: PrismaClient;
   page: number;
   per_page: number;
@@ -10,6 +13,7 @@ export type PaginationProps<T extends Prisma.ModelName> = {
   orderByQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['orderBy'];
   includeQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['include'];
   selectQuery?: Prisma.TypeMap['model'][T]['operations']['findMany']['args']['select'];
+  transformData?: (data: ModelResult<T>) => R;
 };
 
 export class PaginationHelper {
@@ -35,7 +39,7 @@ export class PaginationHelper {
     return (includeQuery ?? {}) as NonNullable<Prisma.TypeMap['model'][T]['operations']['findMany']['args']['include']>;
   }
 
-  static async createPaginationData<T extends Prisma.ModelName>({
+  static async createPaginationData<T extends Prisma.ModelName, R = ModelResult<T>>({
     prismaService,
     page,
     per_page,
@@ -44,7 +48,8 @@ export class PaginationHelper {
     orderByQuery,
     includeQuery,
     selectQuery,
-  }: PaginationProps<T>) {
+    transformData,
+  }: PaginationProps<T, R>) {
 
     const modelKey = (table.charAt(0).toLowerCase() + table.slice(1)) as UncapitalizeModel<T>;
 
@@ -73,10 +78,14 @@ export class PaginationHelper {
       queryArgs.include = includeQuery;
     }
 
-    const data = await modelDelegate.findMany(queryArgs);
+    let data = await modelDelegate.findMany(queryArgs);
+
+    if (transformData) {
+      data = transformData(data);
+    }
 
     return {
-      data,
+      data: data as R,
       pagination: {
         current_page: page,
         per_page,

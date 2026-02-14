@@ -6,7 +6,6 @@ import { Utils } from '@utils/index';
 import { QueryCourseDto } from './dto/query-course.dto';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { AuthGuard } from '@guards/auth.guard';
-import { CheckOwnership } from '@decorators/check-ownership.decorator';
 import { Role } from '@decorators/role.decorator';
 
 @Role('admin')
@@ -35,6 +34,14 @@ export class CourseController {
     return Utils.ResponseSuccess('success', data, pagination);
   }
 
+  @Get(':courseId')
+  async getLearningDetail(
+    @Param('courseId') courseId: string
+  ) {
+    const res = await this.courseService.getCourseDetail(courseId);
+    return Utils.ResponseSuccess('success', res);
+  }
+
   @Patch(":id")
   async updateCourse(
     @Body() body: CreateCourseDto,
@@ -52,7 +59,7 @@ export class CourseController {
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Post(":id/modules")
+  @Patch(":id/modules")
   async updateCourseModules(
     @Param("id") courseId: string,
     @Body() body: CreateModuleDto,
@@ -61,30 +68,4 @@ export class CourseController {
     return Utils.ResponseSuccess('success', res);
   }
 
-  @Get(":id/modules")
-  async getCourseModules(
-    @Param("id") courseId: string,
-  ) {
-    const res = await this.moduleService.getCourseModules(courseId);
-    return Utils.ResponseSuccess('success', res);
-  }
-
-  @Get(":id/modules/:moduleId/items")
-  async getCourseModuleItems(
-    @Param("id") courseId: string,
-    @Param("moduleId") moduleId: string,
-  ) {
-    const res = await this.moduleService.getModuleItems(courseId, moduleId);
-    return Utils.ResponseSuccess('success', res);
-  }
-
-  @Get(":id/modules/:moduleId/items/:itemId")
-  async getCourseModuleItemById(
-    @Param("id") courseId: string,
-    @Param("moduleId") moduleId: string,
-    @Param("itemId") itemId: string,
-  ) {
-    const res = await this.moduleService.getModuleItemById(courseId, itemId, moduleId);
-    return Utils.ResponseSuccess('success', res);
-  }
 }
