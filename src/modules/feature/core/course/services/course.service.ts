@@ -71,6 +71,14 @@ export class CourseService {
                     include: {
                         items: true
                     }
+                },
+                asesor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        profile: true,
+                        email: true,
+                    }
                 }
             }
         })

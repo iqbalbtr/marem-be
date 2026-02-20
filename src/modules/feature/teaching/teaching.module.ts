@@ -5,11 +5,12 @@ import { CourseModule } from '../core/course/course.module';
 import { TeachingGradingController } from './controllers/teaching-grading.controller';
 import { TeachingCourseController } from './controllers/teaching-course.controller';
 import { TeachingGradingService } from './services/teaching-grading.service';
-import { TeachingCoachingService } from './services/teaching-coaching.service';
 import { TeachingSurveyController } from './controllers/teaching-survey.controller';
 import { SurveyModule } from '../core/survey/survey.module';
 import { UserModule } from '../core/user/user.module';
 import { BussinesModule } from '../core/bussines/bussines.module';
+import { TeachingCoachingController } from './controllers/teaching-coaching.controller';
+import { TeachingStudentController } from './controllers/teaching-student.controller';
 
 @Module({
   imports: [
@@ -22,13 +23,13 @@ import { BussinesModule } from '../core/bussines/bussines.module';
   controllers: [
     TeachingGradingController,
     TeachingCourseController,
-    TeachingCourseController,
-    TeachingSurveyController
+    TeachingCoachingController,
+    TeachingSurveyController,
+    TeachingStudentController,
   ],
   providers: [
     TeachingAccessService,
     TeachingGradingService,
-    TeachingCoachingService,
   ],
 })
 export class TeachingModule { }

@@ -4,7 +4,7 @@ import {
     ValidateNested, IsOptional, IsUUID, IsDateString, Min,
     Max
 } from 'class-validator';
-import { ModuleCategory, QuizType, SubmissionFormat } from '../course.constant';
+import { ModuleCategory, SubmissionType, SubmissionFormat } from '../course.constant';
 
 export abstract class BaseItemDataDto {
     @IsEnum(ModuleCategory)
@@ -12,7 +12,7 @@ export abstract class BaseItemDataDto {
 }
 
 export class ArticleDataDto extends BaseItemDataDto {
-    category = ModuleCategory.ARTICLE; 
+    category = ModuleCategory.ARTICLE;
 
     @IsString()
     content: string;
@@ -25,9 +25,6 @@ export class ArticleDataDto extends BaseItemDataDto {
 export class AssignmentDataDto extends BaseItemDataDto {
     category = ModuleCategory.ASSIGNMENT;
 
-    @IsEnum(QuizType)
-    assignment_type: QuizType;
-
     @IsString()
     instructions: string;
 
@@ -39,6 +36,10 @@ export class AssignmentDataDto extends BaseItemDataDto {
     @Max(100)
     max_score: number;
 
+    @IsOptional()
+    @IsNumber()
+    max_attempts?: number = 1;
+
     @IsEnum(SubmissionFormat)
     submission_format: SubmissionFormat;
 }
@@ -46,12 +47,19 @@ export class AssignmentDataDto extends BaseItemDataDto {
 export class QuizDataDto extends BaseItemDataDto {
     category = ModuleCategory.QUIZ;
 
+    @IsEnum(SubmissionType)
+    submission_type: SubmissionType;
+
     @IsString()
     title: string;
 
     @IsOptional()
     @IsNumber()
     time_limit_seconds?: number;
+
+    @IsOptional()
+    @IsNumber()
+    max_attempts?: number = 1;
 
     @IsNumber()
     @Min(0)

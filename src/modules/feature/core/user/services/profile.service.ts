@@ -1,5 +1,5 @@
 import { PrismaService } from '@database/prisma.service';
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BatchParticipantProfileDto } from '../dto/bussiness-profile.dto';
 import { StorageUtils } from '@utils/storage.util';
 import { UpdateProfileExpertiseDto } from '../dto/expertise-profile.dto';
@@ -21,6 +21,17 @@ export class ProfileService {
 
     if (!user) {
       throw new NotFoundException('user not found');
+    }
+
+    if (businessProfile.participant_profile.asesor_id) {
+      const asesor = await this.prismaService.users.findUnique({
+        where: {
+          id: businessProfile.participant_profile.asesor_id
+        }
+      })
+      if (!asesor || asesor.role !== 'asesor') {
+        throw new NotFoundException('asesor not found or not an asesor');
+      }
     }
 
     if (!["participant"].includes(user.role)) {

@@ -11,7 +11,7 @@ import { SubmitSurveyDto } from '../../core/survey/dto/submit-survey.dto';
 
 @UseGuards(AuthGuard)
 @Role(['admin', 'participant'])
-@Controller('/api/teaching/surveys')
+@Controller('/api/learning/surveys')
 export class LearningSurveyController {
 
     constructor(
@@ -26,7 +26,7 @@ export class LearningSurveyController {
     ) {
         const res = await this.surveyService.getListSurveys({
             ...query,
-            target_role: user.role,
+            target_role: 'participant',
         }, {
             reponseIndicator: true,
             user_id: user.user_id,

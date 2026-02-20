@@ -4,7 +4,7 @@ export enum ModuleCategory {
   ASSIGNMENT = 'assignment',
 }
 
-export enum QuizType {
+export enum SubmissionType {
   pre_test = 'pre_test',
   post_test = 'post_test',
 }
@@ -27,7 +27,7 @@ export interface ArticleData extends BaseItemData {
 
 export interface AssignmentData extends BaseItemData {
   category: ModuleCategory.ASSIGNMENT;
-  assignment_type: QuizType;
+  submission_type: SubmissionType;
   instructions: string;
   due_date: string;
   max_score: number;

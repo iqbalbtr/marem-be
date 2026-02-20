@@ -1,10 +1,11 @@
 import { PrismaService } from "@database/prisma.service";
 import { GradingResult, IGradingStrategy } from "../grading.interface";
 import { UserToken } from "@models/token.model";
-import { course_module_items, course_modules } from "@prisma";
-import { Injectable } from "@nestjs/common";
+import { course_module_items, course_modules, PrismaClient } from "@prisma";
+import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { AssignmentGradingDto } from "../../dto/grading.dto";
 import { AssignmentDataDto } from "src/modules/feature/core/course/dto/create-module.dto";
+import { TransactionClient } from "prisma/generated/prisma/internal/prismaNamespace";
 
 @Injectable()
 export class AssignmentGradingStrategy implements IGradingStrategy {
@@ -17,14 +18,25 @@ export class AssignmentGradingStrategy implements IGradingStrategy {
         user: UserToken,
         item: course_module_items & { module: course_modules },
         submissionData: AssignmentGradingDto,
+        cb: (result: GradingResult, tx?: TransactionClient) => Promise<void>
     ): Promise<GradingResult> {
 
         const itemData = item.data as unknown as AssignmentDataDto
 
         if (new Date(itemData.due_date) < new Date()) {
-            throw new Error(`The assignment with ID ${item.id} is past its due date.`);
+            throw new ForbiddenException(`The assignment with ID ${item.id} is past its due date.`);
         }
 
+        const countSubmission = await this.prismaService.course_item_submissions.count({
+            where: {
+                user_id: user.user_id,
+                item_id: item.id
+            }
+        });
+
+        if (itemData.max_attempts && countSubmission >= itemData.max_attempts) {
+            throw new ForbiddenException(`Maximum submission attempts reached for assignment with ID ${item.id}.`);
+        }
 
         const result = await this.prismaService.$transaction(async (tx) => {
             const grade = await tx.course_item_submissions.upsert({
@@ -75,15 +87,19 @@ export class AssignmentGradingStrategy implements IGradingStrategy {
                 }
             })
 
-            return grade;
+            
+            const gradingResult: GradingResult = {
+                score: null,
+                status: 'submitted',
+                metadata: {
+                    submission_id: grade.id
+                }
+            }
+
+            await cb(gradingResult, tx);
+            return gradingResult;
         });
 
-        return {
-            score: null,
-            status: 'submitted',
-            metadata: {
-                submission_id: result.id
-            }
-        }
+        return result;
     }
 }

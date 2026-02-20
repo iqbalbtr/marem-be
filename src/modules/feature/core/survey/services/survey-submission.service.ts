@@ -1,10 +1,10 @@
 import { PrismaService } from "@database/prisma.service";
 import { UserToken } from "@models/token.model";
 import { BaseSubmitItemSurveyDto, CheckboxSubmitSurveyDto, OptionSubmitSurveyDto, SubmitSurveyDto } from "../dto/submit-survey.dto";
-import { BadRequestException, NotFoundException } from "@nestjs/common";
-import { Prisma, survey_category, survey_items, survey_reponse_item } from "@prisma";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { Prisma, survey_category, survey_items } from "@prisma";
 import { BaseItemSurveyDto, CheckboxSurveyDto, OptionSurveyDto } from "../dto/create-survey.dto";
-import {v4 as uuid} from 'uuid'
+import { v4 as uuid } from 'uuid'
 
 type Statistic = {
     chart_type: 'line' | 'bar' | 'stacked_bar',
@@ -25,6 +25,7 @@ type StatisicItemSurvey = {
     statistic: string[] | Statistic
 }
 
+@Injectable()
 export class SurveySubmissionService {
 
     constructor(
@@ -53,22 +54,22 @@ export class SurveySubmissionService {
         if (!survey.can_update_response && survey.survey_responses.length > 0) {
             throw new NotFoundException('Survey already responded');
         }
-        if(['closed', 'archived', 'draft'].includes(survey.status)){
+        if (['closed', 'archived', 'draft'].includes(survey.status)) {
             throw new BadRequestException('Survey is not accepting responses');
         }
 
-        for (const item of survey.survey_items){
+        for (const item of survey.survey_items) {
             const response = responses.questions.find(rp => rp.question_id == item.id)
             this.validateResponses(item, response?.data)
         }
-        
+
         return await this.prismaService.$transaction(async (prisma) => {
-            const surveyResponseId = survey.survey_responses[0].id || uuid()
+            const surveyResponseId = survey.survey_responses[0]?.id || uuid()
             const updated = await prisma.survey_responses.upsert({
                 where: {
                     id: surveyResponseId
                 },
-                create:{
+                create: {
                     user_id: user.user_id,
                     survey_id: surveyId,
                 },
@@ -77,6 +78,7 @@ export class SurveySubmissionService {
                 }
             })
             
+
             await prisma.survey_reponse_item.deleteMany({
                 where: {
                     survey_response_id: updated.id,
@@ -95,7 +97,7 @@ export class SurveySubmissionService {
 
             return updated
         })
-        
+
     }
 
     async getSubmissionById(surveyId: string, user: UserToken) {
@@ -138,30 +140,29 @@ export class SurveySubmissionService {
             is_responded: survey_responses.length > 0,
         };
     }
-    
+
     private validateResponses(item: survey_items, response?: BaseSubmitItemSurveyDto) {
 
-        if((item.data as unknown as BaseItemSurveyDto).required && !response){
+        if ((item.data as unknown as BaseItemSurveyDto).required && !response) {
             throw new BadRequestException('item ' + item.id + 'required')
         }
 
-        if(!response)
+        if (!response)
             return
 
         switch (response.category) {
             case survey_category.checkboxes:
-                for (const cb of (item.data as unknown as CheckboxSurveyDto).options) {
-                    if (!(response as CheckboxSubmitSurveyDto).selected.includes(cb.id)) {
-                        throw new BadRequestException('option selected not found')
-                    }
+                const checkboxes = (item.data as unknown as CheckboxSurveyDto).options
+                if (!checkboxes.map(op => op.id).some(id => (response as CheckboxSubmitSurveyDto).selected.includes(id))) {
+                    throw new BadRequestException('checkbox selected not found')
                 }
                 break;
             case survey_category.options:
-                for (const op of (item.data as unknown as OptionSurveyDto).options) {
-                    if (!(op.id === (response as OptionSubmitSurveyDto).selected_id)) {
-                        throw new BadRequestException('option selected not found')
-                    }
+                const options = (item.data as unknown as OptionSurveyDto).options
+                if (!options.map(op => op.id).includes((response as OptionSubmitSurveyDto).selected_id)) {
+                    throw new BadRequestException('option selected not found')
                 }
+
                 break;
             default:
                 break;

@@ -8,8 +8,8 @@ import { CoachingService } from './services/coaching.service';
 import { QueryCoachingDto } from './dto/query-coaching.dto';
 import { CreateCoachingDto } from './dto/create-coaching.dto';
 
-@UseGuards(AuthGuard)
 @Role('admin')
+@UseGuards(AuthGuard)
 @Controller('/api/coachings')
 export class CoachingController {
 
@@ -22,7 +22,7 @@ export class CoachingController {
     @Query() query: QueryCoachingDto,
   ) {
     const coachings = await this.coachingService.getAllCoachingSessions(query);
-    return Utils.ResponseSuccess('success', coachings);
+    return Utils.ResponseSuccess('success', coachings.data, coachings.pagination);
   }
 
   @Post()
@@ -41,6 +41,15 @@ export class CoachingController {
   ) {
     const res = await this.coachingService.updateSessionCoaching(user, coachingId, body)
     return Utils.ResponseSuccess('success', res);
+  }
+
+  @Get('/:coachingId')
+  async getCoachingSession(
+    @Param('coachingId') coachingId: string,
+    @User() user: UserToken,
+  ) {
+    const res = await this.coachingService.getCoachingSession(user, coachingId);
+      return Utils.ResponseSuccess('success', res)
   }
 
   @Delete('/:coachingId')

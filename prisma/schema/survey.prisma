@@ -30,6 +30,8 @@ enum survey_category {
 model survey_items {
     id                  String                @id @default(uuid())
     survey_id           String
+    title               String
+    required            Boolean               @default(false)
     category            survey_category
     data                Json                  @db.JsonB
     survey              surveys               @relation(fields: [survey_id], references: [id], onDelete: Cascade)

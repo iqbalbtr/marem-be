@@ -41,7 +41,7 @@ export class LearningCourseProgressService {
                     item: { module_id: moduleId }
                 }
             })
-        ]);
+        ]);        
 
         if (completedItems >= totalItems) {
             const exists = await tx.course_module_completions.findUnique({
@@ -54,7 +54,7 @@ export class LearningCourseProgressService {
             }
         }
     }
-
+    
     public async checkAndCompleteCourse(tx: Prisma.TransactionClient, userId: string, courseId: string) {
         const [totalModules, completedModules] = await Promise.all([
             tx.course_modules.count({ where: { course_id: courseId } }),
@@ -64,16 +64,23 @@ export class LearningCourseProgressService {
                     module: { course_id: courseId }
                 }
             })
-        ]);
-
+        ]);        
+        
         if (completedModules >= totalModules) {
-            await tx.courses_participants.updateMany({
+            await tx.courses_participants.upsert({
                 where: {
+                    course_id_user_id: {
+                        user_id: userId,
+                        course_id: courseId
+                    }
+                },
+                create: {
                     user_id: userId,
                     course_id: courseId,
-                    finished_at: null
+                    finished_at: new Date()
                 },
-                data: { finished_at: new Date() }
+                update: {
+                }
             });
         }
     }

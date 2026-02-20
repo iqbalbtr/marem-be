@@ -1,5 +1,4 @@
 import { BaseResponse, PaginationType } from "@models/response.model";
-import { CostType, Prisma, PrismaClient } from "@prisma";
 import { Response } from "express";
 
 export class Utils {

@@ -21,7 +21,7 @@ export class TeachingGradingService {
         const baseQuery: Prisma.course_module_itemsWhereInput = {
             module: {
                 course: {
-                    mentor_id: user.user_id
+                    asesor_id: user.user_id
                 }
             }
         }
@@ -89,12 +89,13 @@ export class TeachingGradingService {
             data: {
                 score: dto.score,
                 feedback: dto.feedback,
+                status: 'graded',
                 graded_at: new Date(),
                 graded_by: {
                     id: user.user_id,
                     name: user.name,
                     email: user.email,
-                    profile: asesorInfo.assesor_profile
+                    profile: asesorInfo.profile
                 }
             }
         });
@@ -107,7 +108,8 @@ export class TeachingGradingService {
             item: {
                 module: {
                     course: {
-                        mentor_id: asesorInfo.id
+                        id: query.course_id ? query.course_id : undefined,
+                        asesor_id: asesorInfo.id
                     }
                 }
             }
@@ -130,7 +132,7 @@ export class TeachingGradingService {
                     ]
                 }
             ]
-        }
+        }        
 
         return PaginationHelper.createPaginationData({
             page: query.page,

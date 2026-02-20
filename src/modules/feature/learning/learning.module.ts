@@ -14,10 +14,13 @@ import { QuizGradingStrategy } from './grading/strategies/quiz-grading.strategy'
 import { CoachingModule } from '../core/coaching/coaching.module';
 import { SurveyModule } from '../core/survey/survey.module';
 import { LearningSurveyController } from './controllers/learning-survey.controller';
+import { CourseModule } from '../core/course/course.module';
+import { LearningCourseController } from './controllers/learning-course.controller';
 
 @Module({
   controllers: [
     LearningController,
+    LearningCourseController,
     LearningCoachingController,
     LearningGradingController,
     LearningSurveyController
@@ -38,7 +41,8 @@ import { LearningSurveyController } from './controllers/learning-survey.controll
   ],
   imports: [
     CoachingModule,
-    SurveyModule
+    SurveyModule,
+    CourseModule
   ],
 })
 export class LearningModule {}

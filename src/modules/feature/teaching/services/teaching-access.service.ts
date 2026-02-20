@@ -1,7 +1,8 @@
 import { PrismaService } from "@database/prisma.service";
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { assesor_profile } from "@prisma";
 
+@Injectable()
 export class TeachingAccessService {
 
     constructor(
@@ -28,10 +29,11 @@ export class TeachingAccessService {
     }
 
     public async getUserInfo(userId: string) {
-        const user = await this.prismaService.users.findUnique({
+
+        const user = await this.prismaService.users.findFirst({
             where: { id: userId, role: {in: ['admin', 'asesor']} },
             include: { assesor_profile: true }
-        });
+        })
 
         if (!user) {
             throw new NotFoundException('User not found');

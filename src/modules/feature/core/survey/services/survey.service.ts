@@ -35,6 +35,7 @@ export class SurveyService {
         if (option?.statusAllowed && option.statusAllowed.length > 0) {
             whereClause.status = { in: option.statusAllowed };
         }
+
         return await PaginationHelper.createPaginationData({
             table: 'surveys',
             page: query.page,
@@ -129,20 +130,18 @@ export class SurveyService {
         }
 
         return await this.prismaService.$transaction(async prisma => {
+
+            const { questions, ...surveyPayload } = surveyData
             await prisma.surveys.update({
                 where: {
                     id: surveyId
                 },
-                data: {
-                    title: surveyData.title,
-                    description: surveyData.description,
-                    target_role: surveyData.target_role,
-                },
+                data: surveyPayload,
             })
 
             const currentIds = survey.survey_items.map(i => i.id);
-            const deleteItemIds = currentIds.filter(id => !surveyData.questions.find(q => q.data.id === id));
-            const updateItems = surveyData.questions.filter(q => currentIds.includes(q.data.id));
+            const deleteItemIds = currentIds.filter(id => !questions.find(q => q.data.id === id));
+            const updateItems = questions.filter(q => currentIds.includes(q.data.id));
 
             if (deleteItemIds.length > 0) {
                 await prisma.survey_items.deleteMany({
@@ -161,12 +160,16 @@ export class SurveyService {
                     update: {
                         category: item.data.category,
                         survey_id: surveyId,
+                        title: item.data.title,
+                        required: item.data.required,
                         data: item.data as unknown as Prisma.InputJsonValue
                     },
                     create: {
                         id: item.data.id,
                         category: item.data.category,
+                        title: item.data.title,
                         survey_id: surveyId,
+                        required: item.data.required,
                         data: item.data as unknown as Prisma.InputJsonValue
                     }
                 }));

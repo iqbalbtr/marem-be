@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import appConfig, { AppConfig } from '@config/app.config';
+import { AppConfig } from '@config/app.config';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
 
 @Injectable()
 export class MailService {
-  
+
   constructor(
+    @InjectQueue("mail-queue") private mailQueue: Queue,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService,
-  ) {}
-  
+  ) { }
+
   async sendEmail(option: ISendMailOptions) {
     return this.mailerService.sendMail(option);
   }
@@ -31,6 +34,6 @@ export class MailService {
         url: loginUrl
       },
     };
-    return this.sendEmail(mailOptions);
+    return this.mailQueue.add('send-verification', mailOptions);
   }
 }

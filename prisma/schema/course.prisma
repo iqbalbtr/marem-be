@@ -50,8 +50,8 @@ model courses {
   is_published Boolean   @default(false)
   published_at DateTime?
 
-  modules               course_modules[]
-  courses_participants  courses_participants[]
+  modules                 course_modules[]
+  courses_participants    courses_participants[]
   course_item_submissions course_item_submissions[]
 
   @@map("courses")
@@ -87,7 +87,7 @@ model course_module_items {
   category module_category
   sequence Int
 
-  data Json
+  data Json @db.JsonB
 
   is_published Boolean @default(true)
 

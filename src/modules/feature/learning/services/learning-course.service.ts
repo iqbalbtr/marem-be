@@ -20,7 +20,9 @@ export class LearningCourseService {
 
     async getCourses(user: UserToken, query: QueryCourseDto) {
         const userInfo = await this.courseAccessService.getUserInfo(user.user_id);
-        const qBuilder = PaginationHelper.getWhereQuery('courses');
+        const qBuilder = PaginationHelper.getWhereQuery('courses', {
+            stage: userInfo.participant_profile?.stage
+        });
 
         const accessFilter: Prisma.coursesWhereInput[] = [];
 
@@ -130,11 +132,11 @@ export class LearningCourseService {
     async getMaterialContent(user: UserToken, itemId: string) {
         const userInfo = await this.courseAccessService.getUserInfo(user.user_id);
 
-        const item = await this.courseAccessService.findParticipantItemWithAccess(itemId, userInfo.participant_profile!);
+        const item = await this.courseAccessService.findParticipantItemWithAccess(itemId, userInfo.participant_profile!, true);
 
         await this.courseProgressService.validateSequenceAccess(user.user_id, item);
 
-        const { course_module_item_completions, ...data } = item;
+        const { course_module_item_completions, submissions, ...data } = item;
 
         const questionMapped = data.category === ModuleCategory.QUIZ ? (data.data as unknown as QuizData).questions.map(q => ({
             ...q,
@@ -145,6 +147,7 @@ export class LearningCourseService {
 
         return {
             ...data,
+            submission: submissions.length ? submissions[0] : null,
             data: {
                 ...data.data as object,
                 ...(questionMapped ? { questions: questionMapped } : {})
@@ -169,7 +172,6 @@ export class LearningCourseService {
         await this.courseProgressService.validateSequenceAccess(userId, item);
 
         return this.prismaService.$transaction(async (tx) => {
-
             const completion = await tx.course_module_item_completions.create({
                 data: {
                     user_id: userId,

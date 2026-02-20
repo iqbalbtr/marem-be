@@ -9,6 +9,10 @@ export class QueryGradeDto extends PaginationDto {
     material_item_id?: string;
 
     @IsOptional()
+    @IsUUID("4")
+    course_id?: string;
+
+    @IsOptional()
     @IsEnum(submission_status, { message: `status must be one of the following values: ${Object.values(submission_status).join(', ')}` })
     status?: submission_status
 

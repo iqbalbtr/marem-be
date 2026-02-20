@@ -13,6 +13,6 @@ import { CoachingController } from './coaching.controller';
     CoachingPresenceService,
     CoachingScheduler
   ],
-  exports: [CoachingLifecycleService, CoachingPresenceService],
+  exports: [CoachingLifecycleService, CoachingPresenceService, CoachingService],
 })
 export class CoachingModule {}

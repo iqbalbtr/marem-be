@@ -4,6 +4,7 @@ import { survey_category, survey_items, survey_reponse_item } from "@prisma";
 import { BaseItemSurveyDto } from "../dto/create-survey.dto";
 import { SurveyAnswerMap, SurveyItemMap } from "../survey.constant";
 import { Cache } from "@nestjs/cache-manager";
+import { ParagraphSubmitSurveyItemDto } from "../dto/submit-survey.dto";
 
 export type StatisticSeriesSimple = {
     label: string;
@@ -28,7 +29,7 @@ export type StatisicItemSurvey = {
     statistic: string[] | Statistic;
 };
 
-@Injectable() 
+@Injectable()
 export class SurveyStatisticService {
 
     constructor(
@@ -42,7 +43,7 @@ export class SurveyStatisticService {
             include: {
                 survey_items: {
                     include: {
-                        survey_reponse_item: true 
+                        survey_reponse_item: true
                     }
                 },
             }
@@ -79,7 +80,7 @@ export class SurveyStatisticService {
             items: mapedItems
         };
 
-        await this.cacheManager.set(cacheKey, result, 3600000);
+        await this.cacheManager.set(cacheKey, result, 15 * 60 * 1000); // Cache selama 1 jam
 
         return result;
     }
@@ -89,6 +90,7 @@ export class SurveyStatisticService {
 
         switch (item.category) {
             case survey_category.answered:
+                return this.handleTextCategory(questionData, responses);
             case survey_category.paragraph:
                 return this.handleTextCategory(questionData, responses);
 
@@ -111,7 +113,7 @@ export class SurveyStatisticService {
 
     private handleTextCategory(questionData: BaseItemSurveyDto, responses: survey_reponse_item[]): StatisicItemSurvey {
         const textData = responses
-            .map((rp: any) => rp.data?.response_text)
+            .map((rp: SurveyAnswerMap['paragraph']) => rp.answer?.response_text || '')
             .filter(text => text);
 
         return {
@@ -126,8 +128,8 @@ export class SurveyStatisticService {
 
         const frequencyMap: Record<string, number> = {};
         for (const rs of responses) {
-            if (rs.data?.selected) {
-                Object.keys(rs.data.selected).forEach(optId => {
+            if (rs.answer?.selected) {
+                Object.keys(rs.answer.selected).forEach(optId => {
                     frequencyMap[optId] = (frequencyMap[optId] || 0) + 1;
                 });
             }
@@ -146,7 +148,7 @@ export class SurveyStatisticService {
             category: survey_category.checkboxes,
             title: itemMap.data.title,
             statistic: {
-                chart_type: 'bar', 
+                chart_type: 'bar',
                 labels: itemMap.data.options.map(o => o.text_option),
                 series: series
             }
@@ -160,8 +162,8 @@ export class SurveyStatisticService {
         const buckets = new Array(12).fill(0);
 
         for (const rs of responses) {
-            if (rs.data?.response_date) {
-                const date = new Date(rs.data.response_date);
+            if (rs.answer?.response_date) {
+                const date = new Date(rs.answer.response_date);
                 if (!isNaN(date.getTime())) {
                     buckets[date.getMonth()]++;
                 }
@@ -178,7 +180,7 @@ export class SurveyStatisticService {
             category: survey_category.date,
             title: itemMap.data.title,
             statistic: {
-                chart_type: 'line', 
+                chart_type: 'line',
                 labels: labels,
                 series: series
             }
@@ -187,12 +189,12 @@ export class SurveyStatisticService {
 
     private handleRatingCategory(itemMap: SurveyItemMap['rating'], responses: SurveyAnswerMap['rating'][]): StatisicItemSurvey {
         const totalResponses = responses.length;
-        const labels = ['1', '2', '3', '4', '5']; 
+        const labels = ['1', '2', '3', '4', '5'];
 
         const buckets: Record<string, number> = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
 
         for (const rs of responses) {
-            const rate = rs.data?.rate;
+            const rate = rs.answer?.rate;
             if (rate && buckets[rate] !== undefined) {
                 buckets[rate]++;
             }
@@ -221,16 +223,14 @@ export class SurveyStatisticService {
     private handleOptionsCategory(itemMap: SurveyItemMap['options'], responses: SurveyAnswerMap['options'][]): StatisicItemSurvey {
         const totalResponses = responses.length;
 
-        // 1. Hitung Frekuensi (O(N))
         const frequencyMap: Record<string, number> = {};
         for (const rs of responses) {
-            const selectedId = rs.data?.selected_id;
+            const selectedId = rs.answer?.selected_id;
             if (selectedId) {
                 frequencyMap[selectedId] = (frequencyMap[selectedId] || 0) + 1;
             }
         }
 
-        // 2. Map ke Series (O(M))
         const series = itemMap.data.options.map(opt => {
             const count = frequencyMap[opt.id] || 0;
             return {

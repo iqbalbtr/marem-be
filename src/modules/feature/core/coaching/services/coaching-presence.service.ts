@@ -1,6 +1,6 @@
 import { PrismaService } from "@database/prisma.service";
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { coaching_session, coaching_type, Prisma } from "@prisma";
+import { coaching_session, coaching_type, Prisma, session_status } from "@prisma";
 import { PaginationHelper } from "src/helpers/pagination.helper";
 import { PaginationDto } from "src/common/dto/pagination-dto";
 import { MarkPresenceDto } from "src/modules/feature/core/coaching/dto/mark-presence.dto";
@@ -30,7 +30,6 @@ export class CoachingPresenceService {
                     },
                     take: 1
                 },
-                participant_profile: true
             },
             orderByQuery: {
                 name: 'asc'
@@ -86,6 +85,12 @@ export class CoachingPresenceService {
             ...userQuery,
             id: participantId
         };
+
+        const now = new Date();
+
+        if(coaching.status !== session_status.ongoing || coaching.start_time > now) {
+            throw new BadRequestException('Coaching session has not started yet');
+        }
 
         const userCount = await this.prismaService.users.count({
             where: finalQuery

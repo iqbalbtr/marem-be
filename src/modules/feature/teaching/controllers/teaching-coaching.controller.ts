@@ -1,21 +1,23 @@
 import { User } from '@decorators/auth.decorator';
 import { Role } from '@decorators/role.decorator';
 import { UserToken } from '@models/token.model';
-import { Body, Controller, Get, Param, Post, Query, Redirect } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Redirect, UseGuards } from '@nestjs/common';
 import { Utils } from '@utils/index';
 import { PaginationDto } from 'src/common/dto/pagination-dto';
 import { CoachingLifecycleService } from '../../core/coaching/services/coaching-lifecycle.service';
 import { CoachingPresenceService } from '../../core/coaching/services/coaching-presence.service';
 import { MarkPresenceDto } from '../../core/coaching/dto/mark-presence.dto';
-import { TeachingCoachingService } from '../services/teaching-coaching.service';
+import { AuthGuard } from '@guards/auth.guard';
+import { CoachingService } from '../../core/coaching/services/coaching.service';
 
+@UseGuards(AuthGuard)
 @Role(['admin', 'asesor'])
 @Controller('/api/teaching/coachings')
 export class TeachingCoachingController {
 
   constructor(
     private readonly coachingLifecycleService: CoachingLifecycleService,
-    private readonly teachingCoachingService: TeachingCoachingService,
+    private readonly coachingService: CoachingService,
     private readonly coachingPresenceService: CoachingPresenceService,
   ) { }
 
@@ -24,8 +26,17 @@ export class TeachingCoachingController {
     @User() user: UserToken,
     @Query() query: PaginationDto,
   ) {
-    const coachings = await this.teachingCoachingService.getAllCoachingSessions(query, user);
+    const coachings = await this.coachingService.getAllCoachingSessions(query, user.user_id);
     return Utils.ResponseSuccess('success', coachings);
+  }
+
+  @Get('/:coachingId/presences')
+  async getCoachingPresences(
+    @Param('coachingId') coachingId: string,
+    @Query() query: PaginationDto,
+  ) {
+    const res = await this.coachingPresenceService.getCoachingPresence(coachingId, query);
+    return Utils.ResponseSuccess('success', res.data, res.pagination);
   }
 
   @Post('/:coachingId/presences')

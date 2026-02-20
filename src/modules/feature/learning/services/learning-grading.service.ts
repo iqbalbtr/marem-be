@@ -5,6 +5,9 @@ import { GradingOrchestrator } from "../grading/grading.orchestrator";
 import { LearningCourseAccessService } from "./learning-course-access.service";
 import { GradingDto } from "../dto/grading.dto";
 import { ModuleCategory, QuizData } from "../../core/course/course.constant";
+import { PaginationHelper } from "src/helpers/pagination.helper";
+import { PaginationDto } from "src/common/dto/pagination-dto";
+import { QueryGradeDto } from "../../teaching/dto/query-grade.dto";
 
 
 @Injectable()
@@ -15,6 +18,98 @@ export class LearningGradingService {
         private readonly courseAccessService: LearningCourseAccessService,
         private readonly prismaService: PrismaService,
     ) { }
+
+    async getAllSubmissions(user: UserToken, query: QueryGradeDto) {
+        let qBuilder = PaginationHelper.getWhereQuery('course_item_submissions', {
+            user_id: user.user_id,
+        })
+
+        if (query.status) {
+            qBuilder.status
+        }
+
+        return PaginationHelper.createPaginationData({
+            page: query.page,
+            per_page: query.limit,
+            prismaService: this.prismaService,
+            table: 'course_item_submissions',
+            whereQuery: qBuilder,
+            orderByQuery: {
+                submitted_at: 'desc'
+            },
+            selectQuery: {
+                id: true,
+                score: true,
+                status: true,
+                graded_at: true,
+                graded_by: true,
+                item: {
+                    select: {
+                        id: true,
+                        title: true,
+                        category: true,
+                    }
+                }
+            }
+        })
+    }
+
+    async getAllSubmissionsCourses(user: UserToken, query: PaginationDto) {
+        const userInfo = await this.courseAccessService.getUserInfo(user.user_id);
+        const qBuilder = PaginationHelper.getWhereQuery('course_module_items', {
+            module: {
+                course: this.courseAccessService.getQueryCourseAccess(userInfo.participant_profile!)
+            },
+            category: {
+                in: [ModuleCategory.ASSIGNMENT, ModuleCategory.QUIZ]
+            }
+        })
+
+        if (query.search) {
+            qBuilder.AND = [
+                {
+                    OR: [
+                        { title: { contains: query.search, mode: 'insensitive' } },
+                    ]
+                }
+            ]
+        }
+
+        return PaginationHelper.createPaginationData({
+            page: query.page,
+            per_page: query.limit,
+            prismaService: this.prismaService,
+            table: 'course_module_items',
+            whereQuery: qBuilder,
+            orderByQuery: {
+                created_at: 'desc'
+            },
+            selectQuery: {
+                id: true,
+                title: true,
+                category: true,
+                created_at: true,
+                submissions: {
+                    where: { user_id: user.user_id },
+                    select: {
+                        id: true,
+                        status: true,
+                        score: true,
+                        graded_at: true,
+                    },
+                },
+            },
+            transformData: (data) => data.map(({ submissions = [], ...item }) => ({
+                ...item,
+                submission: submissions[0]?.id || null ? {
+                    id: submissions[0].id,
+                    status: submissions[0]?.status || null,
+                    score: submissions[0]?.score || null,
+                    graded_at: submissions[0]?.graded_at || null,
+                } : null
+            }))
+        })
+    }
 
     async getStaticaticsForCourse(token: UserToken) {
         const [totalSubmissions, pendingSubmissions, submitedSubmissions] = await Promise.all([

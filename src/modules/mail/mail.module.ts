@@ -5,10 +5,15 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailService } from './mail.service';
 import { resolve } from 'path';
+import { BullModule } from '@nestjs/bullmq';
+import { MailProcessor } from './mail.processor';
 
 @Global()
 @Module({
     imports: [
+        BullModule.registerQueue({
+            name: 'mail-queue',
+        }),
         MailerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
@@ -34,7 +39,7 @@ import { resolve } from 'path';
             }
         }),
     ],
-    providers: [MailService],
+    providers: [MailService, MailProcessor],
     exports: [MailService]
 })
 export class MailModule { }

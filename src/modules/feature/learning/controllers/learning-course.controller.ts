@@ -10,7 +10,7 @@ import { LearningCourseService } from '../services/learning-course.service';
 
 @Role('participant')
 @UseGuards(AuthGuard)
-@Controller('/api/learnings') 
+@Controller('/api/learning/courses') 
 export class LearningCourseController {
 
   constructor(
@@ -23,7 +23,7 @@ export class LearningCourseController {
     @Query() query: QueryCourseDto
   ) {
     const res = await this.learningCourseService.getCourses(user, query);
-    return Utils.ResponseSuccess('success', res);
+    return Utils.ResponseSuccess('success', res.data, res.pagination);
   }
 
   @Get(':learningId/modules')

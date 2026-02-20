@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { UserToken } from '../models/token.model';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../decorators/role.decorator';
+import { Role, ROLE_KEY } from '../decorators/role.decorator';
 import { PrismaService } from '@database/prisma.service';
 import { Cache } from '@nestjs/cache-manager';
 import { SKIP_AUTH_KEY } from '@decorators/skip-auth.decorator';
@@ -41,7 +41,10 @@ export class AuthGuard implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
 
-    const roles = this.reflector.get(Role, context.getHandler());
+    const roles = this.reflector.getAllAndOverride<string[] | string>(ROLE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     // Error return if token is not found
     if (!token) {

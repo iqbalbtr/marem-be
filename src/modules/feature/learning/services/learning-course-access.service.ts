@@ -32,7 +32,7 @@ export class LearningCourseAccessService {
         }
     }
 
-    public async findParticipantItemWithAccess(itemId: string, profile: participant_profile | null | undefined) {
+    public async findParticipantItemWithAccess(itemId: string, profile: participant_profile | null | undefined, withSubmission = false) {
         if (!profile) {
             throw new NotFoundException('Participant profile not found for access check');
         }
@@ -46,7 +46,11 @@ export class LearningCourseAccessService {
                     where: { user_id: profile.user_id },
                     take: 1
                 },
-                module: true
+                module: true,
+                submissions: withSubmission ? {
+                    where: { user_id: profile.user_id },
+                    take: 1
+                } : false
             }
         });
 

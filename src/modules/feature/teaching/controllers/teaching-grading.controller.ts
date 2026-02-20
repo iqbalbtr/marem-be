@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { Role } from '@decorators/role.decorator';
 import { UserToken } from '@models/token.model';
 import { User } from '@decorators/auth.decorator';
@@ -6,8 +6,10 @@ import { Utils } from '@utils/index';
 import { TeachingGradingService } from '../services/teaching-grading.service';
 import { QueryGradeDto } from '../dto/query-grade.dto';
 import { GradeMentorDto } from '../dto/grade-mentor.dto';
+import { AuthGuard } from '@guards/auth.guard';
 
 @Role(['admin', 'asesor'])
+@UseGuards(AuthGuard)
 @Controller('/api/teaching/submissions')
 export class TeachingGradingController {
 

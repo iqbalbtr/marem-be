@@ -13,10 +13,6 @@ export class CreateCoachingDto {
 
     @IsOptional()
     @IsUUID()
-    course_id: string;
-
-    @IsOptional()
-    @IsUUID()
     asesor_id: string;
 
     @IsUrl()

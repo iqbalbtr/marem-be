@@ -52,7 +52,15 @@ export class LearningCoachingService {
             orderByQuery: {
                 created_at: 'desc'
             },
-            includeQuery: {
+            selectQuery: {
+                id: true,
+                title: true,
+                status: true,
+                classification: true,
+                regional: true,
+                stage: true,
+                start_time: true,
+                end_time: true,
                 asesor: {
                     select: {
                         id: true,

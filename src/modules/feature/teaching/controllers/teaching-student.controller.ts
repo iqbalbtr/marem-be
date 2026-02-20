@@ -1,6 +1,6 @@
 import { Role } from '@decorators/role.decorator';
 import { AuthGuard } from '@guards/auth.guard';
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { UserService } from '../../core/user/services/user.service';
 import { UserReportService } from '../../core/user/services/user-report.service';
 import { PaginationDto } from 'src/common/dto/pagination-dto';
@@ -11,7 +11,7 @@ import { BusinessService } from '../../core/bussines/bussines.service';
 
 @UseGuards(AuthGuard)
 @Role(['admin', 'asesor'])
-@Controller('/api/teaching/students/:studentId')
+@Controller('/api/teaching/students')
 export class TeachingStudentController {
 
     constructor(
@@ -32,10 +32,28 @@ export class TeachingStudentController {
         return Utils.ResponseSuccess('success', res.data, res.pagination);
     }
 
-    @Get()
+    @Get(':studentId/report')
+    async getStudentReports(
+        @User() user: UserToken,
+        @Param('studentId') studentId: string,
+    ) {
+        const res = await this.userReportService.getUserReport(studentId, user.user_id)
+        return Utils.ResponseSuccess('success', res);
+    }
+
+    @Get(':studentId/business/summary')
+    async getStudentBusinessReport(
+        @User() user: UserToken,
+        @Param('studentId') studentId: string,
+    ) {
+        const res = await this.businesService.getBusinessDevelopments(studentId, user.user_id)
+        return Utils.ResponseSuccess('success', res);
+    }
+
+    @Get(':studentId')
     async getDetailedStudent(
         @User() user: UserToken,
-        @Query('studentId') studentId: string
+        @Param('studentId') studentId: string
     ) {
         const { assesor_profile, ...res } = await this.userService.findOne(studentId, {
             participant_profile: {
@@ -45,22 +63,5 @@ export class TeachingStudentController {
         return Utils.ResponseSuccess('success', res);
     }
 
-    @Get('report')
-    async getStudentReports(
-        @User() user: UserToken,
-        @Query('studentId') studentId: string,
-    ) {
-        const res = await this.userReportService.getUserReport(studentId, user.user_id)
-        return Utils.ResponseSuccess('success', res);
-    }
-  
-    @Get('business/summary')
-    async getStudentBusinessReport(
-        @User() user: UserToken,
-        @Query('studentId') studentId: string,
-    ) {
-        const res = await this.businesService.getBusinessDevelopments(studentId, user.user_id)
-        return Utils.ResponseSuccess('success', res);
-    }
 }
 

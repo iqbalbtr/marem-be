@@ -11,5 +11,10 @@ import { UserReportService } from './services/user-report.service';
     ProfileService,
     UserReportService
   ],
+  exports: [
+    UserService,
+    ProfileService,
+    UserReportService
+  ],
 })
 export class UserModule {}

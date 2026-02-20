@@ -24,7 +24,7 @@ export class TeachingSurveyController {
         @Query() query: PaginationDto,
         @User() user: UserToken
     ) {
-        const res = await this.surveyService.getListSurveys({ ...query, target_role: user.role }, {
+        const res = await this.surveyService.getListSurveys({ ...query, target_role: 'asesor' }, {
             reponseIndicator: true,
             user_id: user.user_id,
             statusAllowed: ['published', 'archived', 'closed']

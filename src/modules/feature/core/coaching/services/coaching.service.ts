@@ -100,9 +100,13 @@ export class CoachingService {
         return coaching;
     }
 
-    async getAllCoachingSessions(query: QueryCoachingDto) {
+    async getAllCoachingSessions(query: QueryCoachingDto, asesorId?: string) {
 
         const qBuilder = PaginationHelper.getWhereQuery('coaching_session');
+
+        if (asesorId) {
+            qBuilder.asesor_id = asesorId;
+        }
 
         if (query.search) {
             qBuilder.OR = [
@@ -128,16 +132,45 @@ export class CoachingService {
             orderByQuery: {
                 created_at: 'desc'
             },
-            includeQuery: {
+            selectQuery: {
+                id: true,
+                title: true,
+                start_time: true,
+                end_time: true,
+                audience_type: true,
+                coaching_type: true,
+                stage: true,
+                status: true,
                 asesor: {
                     select: {
                         id: true,
                         name: true,
                         email: true,
+                        profile: true,
+                    }
+                }
+            },
+        })
+    }
+
+    async getCoachingSession(user: UserToken, coachingId: string) {
+        const coaching = await this.prismaService.coaching_session.findUnique({
+            where: { id: coachingId },
+            include: {
+                asesor: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        profile: true,
                     }
                 }
             }
-        })
+        });
+        if (!coaching) {
+            throw new NotFoundException('Coaching session not found');
+        }
+        return coaching;
     }
 
     private async validateMentor(mentorId: string) {

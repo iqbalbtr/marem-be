@@ -158,7 +158,7 @@ export class BusinessService {
         });
 
         if (!user) throw new NotFoundException('user not found');
-        if (!user.participant_profile) throw new NotFoundException('participant profile not found');
+        if (!user.participant_profile) throw new NotFoundException('participant profile not found');                                                
         if (!user.participant_profile.business_profile) throw new NotFoundException('business profile not found');
 
         return user.participant_profile.business_profile;

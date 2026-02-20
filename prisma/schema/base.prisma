@@ -13,12 +13,3 @@ datasource db {
   provider = "postgresql"
 }
 
-enum BatchType {
-    in
-    out
-}
-
-enum CostType {
-    fixed
-    percentage
-}

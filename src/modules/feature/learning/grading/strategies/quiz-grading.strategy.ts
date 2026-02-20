@@ -5,6 +5,8 @@ import { course_module_items, course_modules, Prisma } from "@prisma";
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { QuizGradingDto, QuizItemDto } from "../../dto/grading.dto";
 import { QuizData, QuizQuestion } from "src/modules/feature/core/course/course.constant";
+import { QuizDataDto } from "src/modules/feature/core/course/dto/create-module.dto";
+import { TransactionClient } from "prisma/generated/prisma/internal/prismaNamespace";
 
 @Injectable()
 export class QuizGradingStrategy implements IGradingStrategy {
@@ -15,21 +17,21 @@ export class QuizGradingStrategy implements IGradingStrategy {
 
     async execute(
         user: UserToken,
-        item: course_module_items & {module: course_modules},
+        item: course_module_items & { module: course_modules },
         submissionData: QuizGradingDto,
+        cb: (result: GradingResult, tx?: TransactionClient) => Promise<void>
     ): Promise<GradingResult> {
 
-        const isGraded = await this.prismaService.course_item_submissions.findUnique({
+        const itemData = item.data as unknown as QuizDataDto
+        const countSubmission = await this.prismaService.course_item_submissions.count({
             where: {
-                user_id_item_id: {
-                    user_id: user.user_id,
-                    item_id: item.id
-                }
+                user_id: user.user_id,
+                item_id: item.id
             }
         });
 
-        if(isGraded){
-            throw new ForbiddenException(`Submission for item ID ${item.id} by user ID ${user.user_id} has already been graded.`);
+        if (itemData.max_attempts && countSubmission >= itemData.max_attempts) {
+            throw new ForbiddenException(`Maximum submission attempts reached for assignment with ID ${item.id}.`);
         }
 
         const gradingResult = this.processAnswers(submissionData, item.data as unknown as QuizData);
@@ -49,7 +51,7 @@ export class QuizGradingStrategy implements IGradingStrategy {
                         category: submissionData.category,
                         answers: gradingResult.newAnswers
                     } as unknown as Prisma.JsonObject,
-                    status: 'submitted',
+                    status: 'graded',
                     submitted_at: new Date(),
                     graded_at: new Date(),
                     score: gradingResult.totalScore,
@@ -60,15 +62,15 @@ export class QuizGradingStrategy implements IGradingStrategy {
                         category: submissionData.category,
                         answers: gradingResult.newAnswers
                     } as unknown as Prisma.JsonObject,
-                    status: 'submitted',
+                    status: 'graded',
                     graded_at: new Date(),
                     score: gradingResult.totalScore
                 }
             })
 
-            if(gradingResult.passed){
+            if (gradingResult.passed) {
                 await tx.course_module_item_completions.upsert({
-                    where:{
+                    where: {
                         user_id_item_id: {
                             user_id: user.user_id,
                             item_id: item.id
@@ -85,16 +87,21 @@ export class QuizGradingStrategy implements IGradingStrategy {
                 })
             }
 
-            return graded
+            const result: GradingResult = {
+                score: gradingResult.totalScore,
+                status: 'graded',
+                metadata: {
+                    submission_id: graded.id,
+                    total_score: gradingResult.totalAllScore,
+                    passed: gradingResult.passed
+                }
+            }
+
+            await cb(result, tx);
+            return result;
         });
 
-        return {
-            score: gradingResult.totalScore,
-            status: 'submitted',
-            metadata: {
-                submission_id: result.id
-            }
-        }
+        return result;
     }
 
     private processAnswers(
@@ -108,7 +115,7 @@ export class QuizGradingStrategy implements IGradingStrategy {
         let newAnswers: QuizItemDto[] = [];
 
         const questionMap = new Map<string, QuizQuestion>();
-        
+
         for (const question of masterData.questions) {
             questionMap.set(question.id, question);
         }
@@ -116,7 +123,7 @@ export class QuizGradingStrategy implements IGradingStrategy {
         for (const answer of submissionData.answers) {
             const question = questionMap.get(answer.question_id);
             if (question) {
-                if(masterData.time_limit_seconds && answer.total_time_seconds > masterData.time_limit_seconds){
+                if (masterData.time_limit_seconds && answer.total_time_seconds > masterData.time_limit_seconds) {
                     newAnswers.push(answer);
                     continue;
                 }

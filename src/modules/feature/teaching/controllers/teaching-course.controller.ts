@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { User } from '@decorators/auth.decorator';
 import { UserToken } from '@models/token.model';
 import { Utils } from '@utils/index';
@@ -6,7 +6,11 @@ import { PaginationDto } from 'src/common/dto/pagination-dto';
 import { CourseService } from '../../core/course/services/course.service';
 import { ModuleService } from '../../core/course/services/module.service';
 import { CreateModuleDto } from '../../core/course/dto/create-module.dto';
+import { AuthGuard } from '@guards/auth.guard';
+import { Role } from '@decorators/role.decorator';
 
+@Role(['asesor', 'admin'])
+@UseGuards(AuthGuard)
 @Controller('/api/teaching/courses')
 export class TeachingCourseController {
 
@@ -22,7 +26,7 @@ export class TeachingCourseController {
   ) {
     const res = await this.courseService.getAllCourses(query, {
       whereClause: {
-        mentor_id: user.user_id
+        asesor_id: user.user_id
       }
     });
     return Utils.ResponseSuccess('success', res);
@@ -34,7 +38,7 @@ export class TeachingCourseController {
     @Param('courseId') courseId: string
   ) {
     const res = await this.courseService.getCourseDetail(courseId, {
-      mentor_id: user.user_id
+      asesor_id: user.user_id
     });
     return Utils.ResponseSuccess('success', res);
   }
